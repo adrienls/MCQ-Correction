@@ -1,10 +1,5 @@
-/*#include <iostream>
 
-int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
-}*/
-
+/*
 #include "Simple-Web-Server/client_https.hpp"
 #include "Simple-Web-Server/server_https.hpp"
 
@@ -33,33 +28,6 @@ int main() {
     // 1 thread is usually faster than several threads
     HttpsServer server("server.crt", "server.key");
     server.config.port = 8080;
-
-
-    server.resource["^/idPromo$"]["GET"] = [](shared_ptr<HttpsServer::Response> response, shared_ptr<HttpsServer::Request> request) {
-        stringstream stream;
-        stream << "<h1>Request from " << request->remote_endpoint_address() << ":" << request->remote_endpoint_port() << "</h1>";
-
-        stream << "Vous avez demandé la ressource: " << request->content.string() << " de idPromo" << "\r\n\r\n";
-        stream << "Revenez vite!" << "\r\n\r\n";
-
-        response->write(stream);
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // Add resources using path-regex and method-string, and an anonymous function
     // POST-example for the path /string, responds the posted string
@@ -90,7 +58,6 @@ int main() {
     server.resource["^/json$"]["POST"] = [](shared_ptr<HttpsServer::Response> response, shared_ptr<HttpsServer::Request> request) {
         try {
             ptree pt;
-
             read_json(request->content, pt);
 
             auto name = pt.get<string>("firstName") + " " + pt.get<string>("lastName");
@@ -145,8 +112,8 @@ int main() {
     };
 
     // GET-example simulating heavy work in a separate thread
-    server.resource["^/work$"]["GET"] = [](shared_ptr<HttpsServer::Response> response, shared_ptr<HttpsServer::Request> /*request*/) {
-        thread work_thread([response] {
+*///    server.resource["^/work$"]["GET"] = [](shared_ptr<HttpsServer::Response> response, shared_ptr<HttpsServer::Request> /*request*/) {
+/*        thread work_thread([response] {
             this_thread::sleep_for(chrono::seconds(5));
             response->write("Work done");
         });
@@ -233,8 +200,8 @@ int main() {
         }
     };
 
-    server.on_error = [](shared_ptr<HttpsServer::Request> /*request*/, const SimpleWeb::error_code & /*ec*/) {
-        // Handle errors here
+*///    server.on_error = [](shared_ptr<HttpsServer::Request> /*request*/, const SimpleWeb::error_code & /*ec*/) {
+/*        // Handle errors here
         // Note that connection timeouts will also call this handle with ec set to SimpleWeb::errc::operation_canceled
     };
 
@@ -273,3 +240,4 @@ int main() {
 
     server_thread.join();
 }
+*/
