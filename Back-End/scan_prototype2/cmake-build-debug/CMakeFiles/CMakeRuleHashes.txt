@@ -1,0 +1,2 @@
+# Hashes of file build rules.
+f81a9ac04ba8bcd2953a892e1357ac84 CMakeFiles/scan_prototype2_automoc

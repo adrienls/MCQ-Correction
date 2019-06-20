@@ -1,0 +1,4 @@
+/mnt/c/Users/jerem/CLionProjects/scan_prototype2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/jerem/CLionProjects/scan_prototype2/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/c/Users/jerem/CLionProjects/scan_prototype2/cmake-build-debug/CMakeFiles/scan_prototype2.dir
+/mnt/c/Users/jerem/CLionProjects/scan_prototype2/cmake-build-debug/CMakeFiles/scan_prototype2_automoc.dir

@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/scan_prototype2.dir/main.cpp.o CMakeFiles/scan_prototype2.dir/Scanner.cpp.o CMakeFiles/scan_prototype2.dir/scan_prototype2_automoc.cpp.o  -o scan_prototype2 /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.5.7.1 /usr/lib/x86_64-linux-gnu/libQt5Gui.so.5.7.1 /usr/lib/x86_64-linux-gnu/libQt5Core.so.5.7.1 
