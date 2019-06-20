@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>MCQ-Correction</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/styles.css" rel="stylesheet" type="text/css">
+</head>
+<body class="text-center">
+
+<div class="page-header">
+    <h1 class="d-flex align-items-center justify-content-center h-100">Welcome!</h1>
+    <form class="form-inline d-flex align-items-center justify-content-center h-100">
+        <div class="form-group mr-2">
+            <select id="promotion" class="form-control">
+                <option id="promotion1">Promo1</option>
+                <option id="promotion2">Promo2</option>
+            </select>
+        </div>
+        <div class="form-group mr-2">
+            <select id="examination" class="form-control">
+                <option id="examination1">examination 1</option>
+                <option id="examination2">examination 2</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Choose</button>
+    </form>
+</div>
+
+<div class="container"><br>
+        <div class="panel panel-default">
+
+            <div class="panel-body text-center m-0 d-flex flex-column justify-content-center">
+                <form>
+                    <div class="form-group row justify-content-center">
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control text-center" id="searchInput" onkeyup="searchTable()" placeholder="Search for names...">
+                        </div>
+                    </div>
+                </form>
+                <table id="studentsTable" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Students for the Promotion 1 and Examination 1</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="2">Pierre Tabou</td>
+                        <td><button class="btn btn-success">Consult</button></td>
+                        <td><button class="btn btn-danger">Correct</button></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">student 2</td>
+                        <td><button class="btn btn-success">Consult</button></td>
+                        <td><button class="btn btn-danger">Correct</button></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">student 3</td>
+                        <td><button class="btn btn-success">Consult</button></td>
+                        <td><button class="btn btn-danger">Correct</button></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">student 4</td>
+                        <td><button class="btn btn-success">Consult</button></td>
+                        <td><button class="btn btn-danger">Correct</button></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">student 5</td>
+                        <td><button class="btn btn-success">Consult</button></td>
+                        <td><button class="btn btn-danger">Correct</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+    </div>
+</div>
+
+<script src="js/search.js"></script>
+</body>
+</html>
