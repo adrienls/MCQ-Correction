@@ -145,8 +145,8 @@ int getInclination(int firstValue, int secondValue){
     return inclination;
 }
 
-vector<pair <int, int>> boxPositions(QImage &image){
-    vector<pair <int, int>> boxPlace;
+vector<pair <pair <int,int>, pair <int,int>>> boxPositions(QImage &image){
+    vector<pair <pair <int,int>, pair <int,int>>> boxPlace;
 
     vector<int> xies = positions(image);
     vector<int> yies = positions(image, true);
@@ -157,7 +157,6 @@ vector<pair <int, int>> boxPositions(QImage &image){
     int correctX;
     int correctY;
     int diff;
-
     for (int i = 0; i < xies.size(); i++){
         diff = xies[i] - noXies[i];
         diff = (diff < 0) ? -1 : 1;
@@ -167,13 +166,13 @@ vector<pair <int, int>> boxPositions(QImage &image){
             diff = yies[i] - noYies[i];
             diff = (diff < 0) ? -1 : 1;
             correctY = (int)sqrt(yies[j] * getInclination(yies[j], noYies[j])) - diff;
-            boxPlace.emplace_back( make_pair(correctX-5, correctY) );
+            boxPlace.emplace_back( make_pair(correctX-5, correctY), make_pair(j-4, i+1) );
         }
     }
     return boxPlace;
 }
 
-bool isBoxFilled(QImage &image, int x, int y){
+bool isBoxFilled(const QImage &image, int x, int y){
     QColor color;
     int fill = 0;
     for (int i = 0; i < 25; i++){
@@ -184,7 +183,6 @@ bool isBoxFilled(QImage &image, int x, int y){
             }
         }
     }
-    std::cout << "fill : " << fill << std::endl;
     return fill > 250;
 }
 
@@ -192,4 +190,21 @@ void drawCircle(QImage &image, int x, int y){
     QPainter circle(&image);
     circle.setPen(QColor(Qt::red));
     circle.drawEllipse(x, y, 40, 40);
+}
+
+vector<pair <int,int>> getAnswers(QImage &image, vector<pair <pair <int,int>, pair <int,int>>> boxPosition){
+    int x;
+    int y;
+    int size = (int)boxPosition.size();
+    vector<pair <int,int>> answers;
+    for (int i = 0; i < size; i++){
+        x = boxPosition[i].first.first;
+        y = boxPosition[i].first.second;
+        if(isBoxFilled(image, x, y)){
+            drawCircle(image, x, y);
+            answers.emplace_back(  make_pair(boxPosition[i].second.first, boxPosition[i].second.second) );
+        }
+    }
+    //image.save("name.jpg");
+    return answers;
 }

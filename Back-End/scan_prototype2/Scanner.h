@@ -17,6 +17,8 @@
 using std::vector;
 using std::pair;
 
+
+
 int findStart(QImage &image); // Renvoie la coordonée du carré de réference en haut à gauche
 
 bool tryPlace(QImage &image, int x, int y, int minLightness, int maxLightness);
@@ -31,14 +33,20 @@ vector<int> oppositePositions (QImage &image, bool orientation = false);
 
 int getInclination(int firstValue, int secondValue);
 
-vector<pair <int, int>> boxPositions(QImage &image);
-// Renvoie la position x,y des checkbox (prend en conte l'inclinaison de la page)
+vector<pair <pair <int,int>, pair <int,int>>> boxPositions(QImage &image);
+// Renvoie la position x,y des checkbox (prend en conte l'inclinaison de la page) et renvoie dans la deuxieme paire
+// le numéro de la question avec le numéro de la réponse associée.
 
-bool isBoxFilled(QImage &image, int x, int y);
+bool isBoxFilled(const QImage &image, int x, int y);
 // Renvoie true si la checkBox est au moins 40% remplie
 
 void drawCircle(QImage &image, int x, int y);
 // Dessine un cercle rouge autour du point indiqué
 
-//void saveAnswers(){}
+vector<pair <int,int>> getAnswers(QImage &image, vector<pair <pair <int,int>, pair <int,int>>> boxPosition);
+// Renvoie les réponse de l'éleve détectées et dessine une cercle autour de celle-ci.
+// Enregistre ensuite l'image modifée.
+
+
+
 #endif //SCAN_PROTOTYPE2_SCANNER_H
