@@ -21,7 +21,8 @@ int main(int argc, char *argv[])
     QImage imageCreate(image.width(), image.height(), QImage::Format(QImage::Format_ARGB32));
 
     // phase de test
-    
+    vector<pair <pair <int,int>, pair <int,int>>> boxPosition = boxPositions(im);
+    getAnswers(im, boxPosition);
 
     QPixmap newImage = QPixmap::fromImage(im);
     // display

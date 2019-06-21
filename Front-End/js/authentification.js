@@ -1,11 +1,13 @@
+ajaxRequest('GET', 'php/request.php/login/', displayStudentsTable); // verify user is connected
+document.getElementById('authentication-send').onclick = validateLogin;
+
 function ajaxLogin(type, request, callback, login ,password, data = null)
 {
-    var xhr;
+    let xhr;
     // Create XML HTTP request.
     xhr = new XMLHttpRequest();
     xhr.open(type, request, true);
     xhr.setRequestHeader('Authorization','Basic ' + btoa(login +':'+ password));
-
     // Add the onload function.
     xhr.onload = function ()
     {
@@ -14,38 +16,61 @@ function ajaxLogin(type, request, callback, login ,password, data = null)
             case 200:
             case 201:
                 callback(xhr.responseText);
-                ajaxRequest('GET', 'php/request.php/login/', isConnected);
+                ajaxRequest('GET', 'php/request.php/login/', displayStudentsTable);
                 break;
             default:
                 httpErrors(xhr.status);
         }
     };
-    // Send XML HTTP request.
     xhr.send(data);
 }
 
 function setTokenCookie(token)
 {
-    Cookies.set('token', token);
+    Cookies.set('token', token, {expires: 1/48}); //30min
 }
 
-function validateLogin(event) {
+function validateLogin(event)
+{
     event.preventDefault();
-    let login = document.getElementById('login').value;
-    let password = document.getElementById('password').value;
+    let login = document.getElementById('inputLogin').value;
+    let password = document.getElementById('inputPassword').value;
     ajaxLogin('GET', 'php/request.php/authenticate/', setTokenCookie, login, password);
 }
 
-function isConnected()
+function displayStudentsTable(response)
 {
     $('#errors').html('');
-    $('#connect').html('<div class="alert alert-success text-center" role="alert"> Your are connected! </div>');
-    //setTimeout(1000, $('#connect').html('') );
-    ajaxRequest('GET', 'php/request.php/groups/', displayGroups);
+    $('#page-top').html('<h1 class="d-flex align-items-center justify-content-center h-100">Welcome ' + response + '!</h1><div id="formChooseExamination"> <form id="top-form" class="form-inline d-flex align-items-center justify-content-center h-100"> </form> </div>');
+    $('#center-div').html('<div class="panel panel-default">\n' +
+        '            <div class="panel-body text-center m-0 d-flex flex-column justify-content-center">\n' +
+        '                <form>\n' +
+        '                    <div class="form-group row justify-content-center">\n' +
+        '                        <div class="col-lg-6">\n' +
+        '                            <input type="text" class="form-control text-center" id="searchInput" onkeyup="searchTable()" placeholder="Search for names...">\n' +
+        '                        </div>\n' +
+        '                    </div>\n' +
+        '                </form>\n' +
+        '                <table id="studentsTable" class="table table-striped">\n' +
+        '                    <thead id="studentsTHead">\n' +
+        '                    </thead>\n' +
+        '                    <tbody id="studentsTBody">\n' +
+        '                        <tr><td colspan="4" style="color: dodgerblue">Please select a promotion and a examination</td></tr>\n' +
+        '                    </tbody>\n' +
+        '                </table>\n' +
+        '            </div>\n' +
+        '    </div>');
+    ajaxRequest('GET', 'php/request.php/groups/', displayPromotions);
+    ajaxRequest('GET', 'php/request.php/groups/', displayExaminations);
+    document.getElementById("top-form").addEventListener("click", function(event)
+    {
+        event.preventDefault();
+        let promotion = document.querySelector("#promotion > option:checked");
+        let examination = document.querySelector("#examination > option:checked");
+        sessionStorage.setItem("promotionId", promotion.id);
+        sessionStorage.setItem("ExaminationId", examination.id);
+        $('#studentsTHead').html('<tr><th colspan="4">Students for the promotion '+ promotion.value +' and the ' + examination.value + '</th></tr>');
+        ajaxRequest('GET', 'php/request.php/students?groupId='+promotion.id, displayStudents);
+    });
 }
-
-
-// verify user is connected
-ajaxRequest('GET', 'php/request.php/login/', isConnected);
-document.getElementById('authentication-send').onclick = validateLogin;
 

@@ -34,11 +34,8 @@ function ajaxRequest(type, request, callback, data = null)
     {
       case 200:
       case 201:
-        //console.log(xhr.responseText);
         callback(xhr.responseText);
         break;
-      case 401:
-
       default:
         httpErrors(xhr.status);
     }
