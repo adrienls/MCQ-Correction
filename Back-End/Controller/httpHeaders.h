@@ -1,0 +1,29 @@
+//
+// Created by adrien on 21/06/19.
+//
+
+#ifndef MCQ_CORRECTION_HTTPHEADERS_H
+#define MCQ_CORRECTION_HTTPHEADERS_H
+
+#include <string>
+#include <sstream>
+
+using std::string;
+using std::stringstream;
+
+string validHeaders(const string& http_version){
+    stringstream ss;
+    ss << "Content-Type: text/plain; charset=utf-8\r\n"
+          "Cache-control: no-store, no-cache, must-revalidate\r\n"
+          "Pragma: no-cache\r\n"
+          "HTTP/" << http_version << " 200 OK";
+    return ss.str();
+}
+
+string invalidHeaders(const string& http_version){
+    stringstream ss;
+    ss << "HTTP/" << http_version << " 400 Bad Request";
+    return ss.str();
+}
+
+#endif //MCQ_CORRECTION_HTTPHEADERS_H

@@ -41,12 +41,14 @@ public:
             session->close();
         }
     }
+
+    void addToken(const string& token, const string& login);
+
     //void fetchData(const map<string, string>& fields, const string& table, const map<string, string>& where = {});
     void fetchToken(string& token, const string& login_teacher);
     void fetchPromotions(string& jsonResponse);
     void fetchExams(string& jsonResponse, const string& id_promotion, const string& login_teacher);
     void fetchStudents(string& jsonResponse, const string& id_promotion);
 };
-
 
 #endif //MCQ_CORRECTION_DATABASEMANAGER_H

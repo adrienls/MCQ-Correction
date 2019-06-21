@@ -36,6 +36,21 @@ void DatabaseManager::connect() {
 
 }
 
+void DatabaseManager::addToken(const string& token, const string &login) {
+    try {
+        soci::row fields;
+        soci::statement selectFields = (session->prepare <<
+                "UPDATE teacher SET token = :token WHERE login = :login",
+                soci::use(token, "token"),
+                soci::use(login, "login"),
+                soci::into(fields));
+        selectFields.execute(true);
+    }
+    catch (const std::exception &e) {
+        cerr << "Error: " << e.what() << endl;
+    }
+}
+
 void DatabaseManager::fetchToken(string& token, const string& login){
     try {
         soci::row fields;

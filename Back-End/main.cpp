@@ -7,15 +7,17 @@
 #include <boost/property_tree/ptree.hpp>
 
 // Added for the default_resource example
-#include "Simple-Web-Server/crypto.hpp"
-#include "Model/DatabaseManager.h"
-#include "Controller/base64.h"
-#include "Controller/hash.h"
 #include <algorithm>
 #include <boost/filesystem.hpp>
 #include <fstream>
 #include <vector>
 #include <openssl/sha.h>
+
+#include "Simple-Web-Server/crypto.hpp"
+#include "Model/DatabaseManager.h"
+#include "Controller/base64.h"
+#include "Controller/hash.h"
+#include "Controller/httpHeaders.h"
 
 using namespace std;
 // Added for the json-example:
@@ -34,103 +36,134 @@ int main() {
 
     server.resource["^/login"]["GET"] = [](shared_ptr<HttpsServer::Response> response,
                                                 shared_ptr<HttpsServer::Request> request) {
-        DatabaseManager db;
-        string token;
+        try{
+            DatabaseManager db;
+            string token;
 
-        SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
-        string login;
-        for(const auto& value : parameters){
-            if(value.first == "login_teacher"){
-                login = value.second;
+            SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            string login;
+            for(const auto& value : parameters){
+                if(value.first == "login"){
+                    login = value.second;
+                }
+                else{
+                    throw invalid_argument("Wrong Parameter! 'login' is the only valid parameter for this request.");
+                }
             }
-            //TODO verif le cas du else et renvoyer erreur
+            db.fetchToken(token, login);
+            *response << validHeaders(request->http_version);
+            response->write(token);
         }
-
-        db.fetchToken(token, login);
-        response->write(token);
+        catch(const exception &e){
+            *response << invalidHeaders(request->http_version) << "\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
+        }
     };
 
     server.resource["^/authenticate$"]["GET"] = [](shared_ptr<HttpsServer::Response> response,
                                            shared_ptr<HttpsServer::Request> request) {
-        DatabaseManager db;
-        string token;
+        try{
+            DatabaseManager db;
 
-        SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
-        string login, password;
-        for(const auto& value : parameters){
-            if(value.first == "login"){
-                login = value.second;
+            SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            string login, password;
+            for(const auto& value : parameters){
+                if(value.first == "login"){
+                    login = value.second;
+                }
+                else if(value.first == "password"){
+                    password = value.second;
+                }
+                else{
+                    throw invalid_argument("Wrong Parameter! 'login' and 'password' are the only valid parameters for this request.");
+                }
             }
-            else if(value.first == "password"){
-                password = value.second;
-            }
-            //TODO verif le cas du else et renvoyer erreur
+            login = decode(login);
+            password = decode(password);
+            string hash = sha512(password);
+
+            unsigned char* randomToken;
+            RAND_bytes(randomToken, 30);
+            string token = (char*)randomToken;
+            db.addToken(token, login);
+            *response << validHeaders(request->http_version);
+            response->write(token);
         }
-
-        login = decode(login);
-        password = decode(password);
-
-        string hash = sha512(password);
-
-        db.fetchToken(token, login);
-        response->write(token);
+        catch(const exception &e){
+            *response << invalidHeaders(request->http_version) << "\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
+        }
     };
 
     server.resource["^/promotion$"]["GET"] = [](shared_ptr<HttpsServer::Response> response,
                                               shared_ptr<HttpsServer::Request> request) {
-        DatabaseManager db;
-        string jsonResponse;
-        db.fetchPromotions(jsonResponse);
-        response->write(jsonResponse);
+        try{
+            DatabaseManager db;
+            string jsonResponse;
+            db.fetchPromotions(jsonResponse);
+            *response << validHeaders(request->http_version);
+            response->write(jsonResponse);
+        }
+        catch(const exception &e){
+            *response << invalidHeaders(request->http_version) << "\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
+        }
     };
 
 
     server.resource["^/examination$"]["GET"] = [](shared_ptr<HttpsServer::Response> response,
                                                 shared_ptr<HttpsServer::Request> request) {
-        DatabaseManager db;
-        string jsonResponse;
+        try{
+            DatabaseManager db;
+            string jsonResponse;
 
-        SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
-        string id, login;
-        for(const auto& value : parameters){
-            if(value.first == "id_promotion"){
-                id = value.second;
+            SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            string id, login;
+            for(const auto& value : parameters){
+                if(value.first == "id_promotion"){
+                    id = value.second;
+                }
+                else if(value.first == "login_teacher"){
+                    login = value.second;
+                }
+                else{
+                    throw invalid_argument("Wrong Parameter! 'id_promotion' and 'login_teacher' are the only valid parameters for this request.");
+                }
             }
-            else if(value.first == "login_teacher"){
-                login = value.second;
-            }
+            db.fetchExams(jsonResponse, id, login);
+            *response << validHeaders(request->http_version);
+            response->write(jsonResponse);
         }
-
-        db.fetchExams(jsonResponse, id, login);
-        response->write(jsonResponse);
+        catch(const exception &e){
+            *response << invalidHeaders(request->http_version) << "\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
+        }
     };
 
     server.resource["^/student$"]["GET"] = [](shared_ptr<HttpsServer::Response> response,
                                                  shared_ptr<HttpsServer::Request> request) {
-        DatabaseManager db;
-        string jsonResponse;
+        try{
+            DatabaseManager db;
+            string jsonResponse;
 
-        SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
-        string id;
-        for(const auto& value : parameters){
-            if(value.first == "id_promotion"){
-                id = value.second;
+            SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            string id;
+            for(const auto& value : parameters){
+                if(value.first == "id_promotion"){
+                    id = value.second;
+                }
+                else{
+                    throw invalid_argument("Wrong Parameter! 'id_promotion' is the only valid parameter for this request.");
+                }
             }
+            db.fetchStudents(jsonResponse, id);
+            *response << validHeaders(request->http_version);
+            response->write(jsonResponse);
         }
-
-        db.fetchStudents(jsonResponse, id);
-        response->write(jsonResponse);
-    };
-
-    server.on_error = [](shared_ptr<HttpsServer::Request> /*request*/, const SimpleWeb::error_code & /*ec*/) {
-        // Handle errors here
-        // Note that connection timeouts will also call this handle with ec set to SimpleWeb::errc::operation_canceled
+        catch(const exception &e){
+            *response << invalidHeaders(request->http_version) << "\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
+        }
     };
 
     thread server_thread([&server]() {
         // Start server
         server.start();
     });
-
     server_thread.join();
 }
