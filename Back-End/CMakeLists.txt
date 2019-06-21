@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 find_package(Boost 1.67.0 COMPONENTS filesystem thread REQUIRED)
 find_package(OpenSSL REQUIRED)
-add_executable(MCQ_Correction main.cpp https_examples.cpp Model/DatabaseManager.cpp Model/DatabaseManager.h)
+add_executable(MCQ_Correction main.cpp https_examples.cpp Model/DatabaseManager.cpp Model/DatabaseManager.h Controller/base64.cpp Controller/base64.h Controller/hash.cpp Controller/hash.h)
 
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(/usr/include/soci)

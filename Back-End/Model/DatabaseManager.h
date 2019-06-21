@@ -1,17 +1,12 @@
-//
-// Created by adrien on 19/06/19.
-//
 
 #ifndef MCQ_CORRECTION_DATABASEMANAGER_H
 #define MCQ_CORRECTION_DATABASEMANAGER_H
 
 #include <soci.h>
 #include <soci-mysql.h>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include <string>
 
 using std::string;
-using boost::property_tree::ptree;
 
 class DatabaseManager {
 private:
@@ -46,7 +41,11 @@ public:
             session->close();
         }
     }
-    void fetchData(const string& sqlQuery, const ptree& jsonTree);
+    //void fetchData(const map<string, string>& fields, const string& table, const map<string, string>& where = {});
+    void fetchToken(string& token, const string& login_teacher);
+    void fetchPromotions(string& jsonResponse);
+    void fetchExams(string& jsonResponse, const string& id_promotion, const string& login_teacher);
+    void fetchStudents(string& jsonResponse, const string& id_promotion);
 };
 
 
