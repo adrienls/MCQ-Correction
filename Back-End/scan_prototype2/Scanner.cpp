@@ -188,7 +188,10 @@ bool isBoxFilled(const QImage &image, int x, int y){
 
 void drawCircle(QImage &image, int x, int y){
     QPainter circle(&image);
-    circle.setPen(QColor(Qt::red));
+    QPen qpen;
+    qpen.setWidth(2);
+    qpen.setColor(QColor(Qt::red));
+    circle.setPen(qpen);
     circle.drawEllipse(x-5, y-5, 40, 40);
 }
 

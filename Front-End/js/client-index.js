@@ -29,28 +29,28 @@ function displayStudents(students)
     //let data = false;
     if (data) {
         let text;
-        $('#studentsTBody').html('');
-        for (let i = 0; i < data.length; i++) {
-            text += '<tr id=studentId' + data[i].id + '>';
-            text += '<td id="nameStudent" colspan="2">'+ data[i].firstname + ' ' + data[i].lastname + '</td>';
-            text += '<td><button id="btnConsult" class="btn btn-success">Consult</button></td>';
-            text += '<td><button id="btnCorrect" class="btn btn-danger">Correct</button></td>';
-            text += '</tr>';
-        }
-        $('#studentsTBody').append(text);
+        let studentsTable = document.getElementById("studentsTBody");
+        for(let item of data)
+        {
+            tr = document.createElement('tr');
+            tr.innerHTML = "<td id=\"idStudent"+item.id+"\">" + item.id + "</td>" +
+                "<td><span id=\"nameStudent"+item.id+"\"  >"+item.firstname + ' ' +  item.lastname+ "\</td>" +
+                "<td><button id=\"consult"+item.id+"\" class=\"btn btn-success\">Consult</button></td>" +
+                "<td><button id=\"correct"+item.id+"\" class=\"btn btn-danger\">Correct</button></td>";
+            studentsTable.appendChild(tr);
 
-        document.getElementById('btnConsult').onclick = function consultAStudent(event) {
-            event.preventDefault();
-            document.location.href="index.html#consultStudent";
-            console.log("idStudent = " + document.getElementById('studentId'));
-            sessionStorage.setItem("idStudent", "1");
-            sessionStorage.setItem("nameStudent", document.getElementById('nameStudent').innerText);
-            displayConsultStudent();
-        };
-        document.getElementById('btnCorrect').onclick = function correctAStudent(event) {
-            event.preventDefault();
-            document.location.href="index.html#correctStudent";
-            displayCorrectStudent();
+            document.getElementById("consult" + item.id).addEventListener("click", function (event) {
+                //let button = event.target;
+                sessionStorage.setItem("idStudent", document.getElementById('idStudent'+item.id).innerText);
+                sessionStorage.setItem("nameStudent", document.getElementById('nameStudent'+item.id).innerText);
+                displayConsultStudent();
+            });
+            document.getElementById("correct" + item.id).addEventListener("click", function (event) {
+                //let button = event.target;
+                sessionStorage.setItem("idStudent", document.getElementById('idStudent'+item.id).innerText);
+                sessionStorage.setItem("nameStudent", document.getElementById('nameStudent'+item.id).innerText);
+                displayCorrectStudent();
+            });
         }
     }
     else {
@@ -67,11 +67,12 @@ function displayConsultStudent()
         '            <a class="btn btn-primary" href="index.html">Go home </a>\n' +
         '        </div>\n' +
         '        <div id="studentInformations" class="form-group mr-2">\n' +
-        '            <div class="card">firstName lastName - promotionName - examinationName</div>\n' +
+        '            <div class="card">Student: '+ sessionStorage.getItem('nameStudent') +' - Promotion '+ sessionStorage.getItem('idPromotion') +' - Examination '+ sessionStorage.getItem('idExamination') +'</div>\n' +
         '        </div>\n' +
         '        <button id="btnCorrect" class="btn btn-danger">Correct</button>\n' +
         '    </form>');
-    $('#center-div').html('    <img class="img-fluid img-thumbnail mx-auto d-block" style="width: 50%" src="http://10.0.1.49/1/19.jpg" alt="img-examination">\n')
+    let urlImage = "http://10.0.1.49/"+sessionStorage.getItem('idExamination')+'/'+sessionStorage.getItem('idStudent')+".jpg";
+    $('#center-div').html('    <img class="img-fluid img-thumbnail mx-auto d-block" style="width: 50%" src="'+urlImage+'" alt="img-examination">\n')
     document.getElementById('btnCorrect').onclick = function correctAStudent(event) {
         event.preventDefault();
         document.location.href="index.html#correctStudent";
@@ -87,12 +88,13 @@ function displayCorrectStudent()
         '            <a class="btn btn-primary" href="index.html">Go home </a>\n' +
         '        </div>\n' +
         '        <div class="form-group mr-2">\n' +
-        '            <div class="card">Student: Pierre Tabou - Promotion 1 - Examination 1</div>\n' +
+        '            <div class="card">Student: '+ sessionStorage.getItem('nameStudent') +' - Promotion '+ sessionStorage.getItem('idPromotion') +' - Examination '+ sessionStorage.getItem('idExamination') +'</div>\n' +
         '        </div>\n' +
         '    </form><br><br>');
+    let urlImage = "http://10.0.1.49/"+sessionStorage.getItem('idExamination')+'/'+sessionStorage.getItem('idStudent')+".jpg";
     $('#center-div').html('<div class="row align-content-center">\n' +
         '            <div class="col-md-6">\n' +
-        '                <img id="img" class="img-fluid img-thumbnail mx-auto d-block" style="width: 100%" src="http://10.0.1.49/1/19.jpg" alt="img-examination">            </div>\n' +
+        '                <img id="img" class="img-fluid img-thumbnail mx-auto d-block" style="width: 100%" src="'+urlImage+'" alt="img-examination">            </div>\n' +
         '            <div class="col-md-6">\n' +
         '                <form>\n' +
         '                <div class="form-row">\n' +
