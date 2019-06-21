@@ -1,11 +1,6 @@
 #include "Simple-Web-Server/client_https.hpp"
 #include "Simple-Web-Server/server_https.hpp"
 
-// Added for the json-example
-#define BOOST_SPIRIT_THREADSAFE
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
-
 // Added for the default_resource example
 #include <algorithm>
 #include <boost/filesystem.hpp>
@@ -20,8 +15,6 @@
 #include "Controller/httpHeaders.h"
 
 using namespace std;
-// Added for the json-example:
-using namespace boost::property_tree;
 
 using HttpsServer = SimpleWeb::Server<SimpleWeb::HTTPS>;
 using HttpsClient = SimpleWeb::Client<SimpleWeb::HTTPS>;
@@ -32,7 +25,6 @@ int main() {
     // 1 thread is usually faster than several threads
     HttpsServer server("server.crt", "server.key");
     server.config.port = 8080;
-
 
     server.resource["^/login"]["GET"] = [](shared_ptr<HttpsServer::Response> response,
                                                 shared_ptr<HttpsServer::Request> request) {
