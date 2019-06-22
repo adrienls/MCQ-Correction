@@ -6,7 +6,6 @@ function displayPromotions(groups)
         text += '<option id='+data[i].id+'>'+data[i].name+'</option>';
     }
     text += '</select></div>';
-    console.log(document.getElementById('promotion'));
     $('#top-form').append(text);
 }
 
@@ -30,6 +29,7 @@ function displayStudents(students)
     if (data) {
         let text;
         let studentsTable = document.getElementById("studentsTBody");
+        studentsTable.innerText = "";
         for(let item of data)
         {
             tr = document.createElement('tr');

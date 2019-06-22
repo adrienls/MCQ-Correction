@@ -43,7 +43,7 @@ function displayStudentsTable(response)
 {
     $('#errors').html('');
     $('#page-top').html('<h1 class="d-flex align-items-center justify-content-center h-100">Welcome ' + response + '!</h1><div id="formChooseExamination"> <form id="top-form" class="form-inline d-flex align-items-center justify-content-center h-100"> </form> </div>');
-    $('#center-div').html('<div class="panel panel-default">\n' +
+    $('#center-div').html('<div class="panel panel-default"><br>\n' +
         '            <div class="panel-body text-center m-0 d-flex flex-column justify-content-center">\n' +
         '                <form>\n' +
         '                    <div class="form-group row justify-content-center">\n' +

@@ -6,12 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/qsvtr/server/projects/cir2/MCQ-Correction/Back-End/scan_prototype2/Scanner.cpp
-Scanner.h
-/home/qsvtr/server/projects/cir2/MCQ-Correction/Back-End/scan_prototype2/Scanner.h
-cmath
--
-
 /home/qsvtr/server/projects/cir2/MCQ-Correction/Back-End/scan_prototype2/Scanner.h
 iostream
 -
@@ -29,6 +23,22 @@ vector
 -
 QPainter
 -
+
+/home/qsvtr/server/projects/cir2/MCQ-Correction/Back-End/scan_prototype2/main.cpp
+iostream
+-
+QApplication
+-
+QGraphicsScene
+-
+QtWidgets/QGraphicsView
+-
+QtWidgets/QGraphicsPixmapItem
+-
+QDebug
+-
+Scanner.h
+/home/qsvtr/server/projects/cir2/MCQ-Correction/Back-End/scan_prototype2/Scanner.h
 
 /usr/include/x86_64-linux-gnu/qt5/QtCore/QDebug
 qdebug.h

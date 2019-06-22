@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QGraphicsScene scene;
     QGraphicsView view(&scene);
     QPixmap image("images/test MCQ solid.jpg");
-    //QPixmap image("images/1/1.jpg");
+    //QPixmap image("images/1/19.jpg");
 
     qDebug() << image.width() << " " << image.height();
 
