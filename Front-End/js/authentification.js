@@ -7,7 +7,7 @@ function ajaxLogin(type, request, callback, login ,password, data = null)
     // Create XML HTTP request.
     xhr = new XMLHttpRequest();
     xhr.open(type, request, true);
-    //xhr.setRequestHeader('Authorization','Basic ' + btoa(login +':'+ password));
+    xhr.setRequestHeader('Authorization','Basic ' + btoa(login +':'+ password));
     // Add the onload function.
     xhr.onload = function ()
     {
@@ -16,7 +16,8 @@ function ajaxLogin(type, request, callback, login ,password, data = null)
             case 200:
             case 201:
                 callback(xhr.responseText);
-                ajaxRequest('GET', 'php/request.php/login?login='+btoa(login)+'&password='+btoa(password), displayStudentsTable);
+                ajaxRequest('GET', 'php/request.php/login/', displayStudentsTable);
+                //ajaxRequest('GET', 'php/request.php/login?login='+btoa(login)+'&password='+btoa(password), displayStudentsTable);
                 break;
             default:
                 httpErrors(xhr.status);
@@ -70,7 +71,7 @@ function displayStudentsTable(response)
         sessionStorage.setItem("idPromotion", promotion.id);
         sessionStorage.setItem("idExamination", examination.id);
         $('#studentsTHead').html('<tr><th colspan="4">Students for the promotion '+ promotion.value +' and the ' + examination.value + '</th></tr>');
-        ajaxRequest('GET', 'php/request.php/students?groupId='+promotion.id, displayStudents);
+        ajaxRequest('GET', 'php/request.php/student?groupId='+promotion.id, displayStudents);
     });
 }
 
