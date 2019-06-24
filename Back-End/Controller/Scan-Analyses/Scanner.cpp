@@ -237,17 +237,10 @@ vector<pair <pair <int,int>, pair <int,int>>> Scanner::boxPositions(){
     vector<int> noXies = oppositePositions();
     vector<int> noYies = oppositePositions(true);
 
-    int correctX;
-    int correctY;
-    float mx;
-    float my;
 
     for (int i = 0; i < xies.size(); i++){
-        correctX = xies[i];
         for (int j = 0; j < yies.size(); j++){
-            correctY = yies[j];
-            boxPlace.emplace_back( make_pair(correctX-5, correctY), make_pair(j-4, i+1) );
-            //debugImage(correctX,correctY);
+            boxPlace.emplace_back( make_pair(xies[i]-6, yies[j]), make_pair(j-4, i+1) );
         }
     }
     return boxPlace;
@@ -269,8 +262,11 @@ bool Scanner::isBoxFilled(int x, int y){
 
 void Scanner::drawCircle(int x, int y){
     QPainter circle(&image);
-    circle.setPen(QColor(Qt::red));
-    circle.drawEllipse(x-5, y-5, 40, 40);
+    QPen qpen;
+    qpen.setWidth(3);
+    qpen.setColor(QColor(Qt::red));
+    circle.setPen(qpen);
+    circle.drawEllipse(x-6, y-6, 40, 40);
 }
 
 vector<pair <int,int>> Scanner::getAnswers(vector<pair <pair <int,int>, pair <int,int>>> boxPosition){
@@ -286,11 +282,10 @@ vector<pair <int,int>> Scanner::getAnswers(vector<pair <pair <int,int>, pair <in
             answers.emplace_back(  make_pair(boxPosition[i].second.first, boxPosition[i].second.second) );
         }
     }
-    //image.save("name.jpg");
     return answers;
 }
 
-Scanner::Scanner(const QImage &image, bool cornerStartX, bool cornerStartY) : image(image) {
+Scanner::Scanner(const QImage &image, bool cornerStartX, bool cornerStartY) : image(image), cornerStartX(cornerStartX), cornerStartY(cornerStartY) {
     libconfig::Config config;
     config.readFile("server.cfg");
 
