@@ -1,4 +1,0 @@
-/home/qsvtr/server/projects/cir2/MCQ-Correction/Back-End/scan_prototype2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/qsvtr/server/projects/cir2/MCQ-Correction/Back-End/scan_prototype2/cmake-build-debug/CMakeFiles/scan_prototype2.dir
-/home/qsvtr/server/projects/cir2/MCQ-Correction/Back-End/scan_prototype2/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/qsvtr/server/projects/cir2/MCQ-Correction/Back-End/scan_prototype2/cmake-build-debug/CMakeFiles/scan_prototype2_autogen.dir

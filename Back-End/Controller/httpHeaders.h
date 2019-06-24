@@ -15,14 +15,14 @@ string validHeaders(const string& http_version){
     stringstream ss;
     ss << "Content-Type: text/plain; charset=utf-8\r\n"
           "Cache-control: no-store, no-cache, must-revalidate\r\n"
-          "Pragma: no-cache\r\n"
-          "HTTP/" << http_version << " 200 OK";
+          "Pragma: no-cache\r\n";
+          //"HTTP/" << http_version << " 200 OK\r\n";
     return ss.str();
 }
 
 string invalidHeaders(const string& http_version){
     stringstream ss;
-    ss << "HTTP/" << http_version << " 400 Bad Request";
+    ss << "HTTP/" << http_version << " 400 Bad Request\r\n";
     return ss.str();
 }
 

@@ -6,20 +6,23 @@
 #include <boost/filesystem.hpp>
 #include <fstream>
 #include <vector>
-#include <openssl/sha.h>
 
 #include "Simple-Web-Server/crypto.hpp"
 #include "Model/DatabaseManager.h"
 #include "Controller/base64.h"
 #include "Controller/hash.h"
 #include "Controller/httpHeaders.h"
+#include "Controller/Scan-Analyses/MainScan.h"
 
-using namespace std;
+using std::shared_ptr;
+using std::invalid_argument;
+using std::exception;
+using std::thread;
 
 using HttpsServer = SimpleWeb::Server<SimpleWeb::HTTPS>;
 using HttpsClient = SimpleWeb::Client<SimpleWeb::HTTPS>;
 
-int main() {
+int main(int argc, char** argv) {
     // HTTPS-server at port 8080 using 1 thread
     // Unless you do more heavy non-threaded processing in the resources,
     // 1 thread is usually faster than several threads
@@ -159,3 +162,15 @@ int main() {
     });
     server_thread.join();
 }
+
+
+/*
+ *
+ * Main pour tester le scanner, tout les includes sont déjà présent en haut du fichier
+ *
+ */
+/*
+int main(int argc, char** argv) {
+
+}
+ */
