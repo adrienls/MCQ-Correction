@@ -236,11 +236,13 @@ vector<pair <pair <int,int>, pair <int,int>>> Scanner::boxPositions(){
 
     vector<int> noXies = oppositePositions();
     vector<int> noYies = oppositePositions(true);
+    unsigned long  sizeY = yies.size();
+    unsigned long  sizeX = xies.size()/2;
 
-
-    for (int i = 0; i < xies.size(); i++){
-        for (int j = 0; j < yies.size(); j++){
-            boxPlace.emplace_back( make_pair(xies[i]-6, yies[j]), make_pair(j-4, i+1) );
+    for (int i = 0; i < sizeY; i++){
+        for (int j = 0; j < sizeX; j++){
+            boxPlace.emplace_back( make_pair(xies[j]-6, yies[i]), make_pair(i-4, j+1) );
+            boxPlace.emplace_back( make_pair(xies[sizeX + j]-6, yies[i]), make_pair(i-4+40, j+1) );
         }
     }
     return boxPlace;
