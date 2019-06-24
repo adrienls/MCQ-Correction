@@ -236,13 +236,37 @@ vector<pair <pair <int,int>, pair <int,int>>> Scanner::boxPositions(){
 
     vector<int> noXies = oppositePositions();
     vector<int> noYies = oppositePositions(true);
-    unsigned long  sizeY = yies.size();
-    unsigned long  sizeX = xies.size()/2;
-
+    int sizeY = (int)yies.size();
+    int sizeX = (int)xies.size()/2;
+    int questionNumber;
+    int questionNumber2;
+    int answerNumber;
     for (int i = 0; i < sizeY; i++){
         for (int j = 0; j < sizeX; j++){
-            boxPlace.emplace_back( make_pair(xies[j]-6, yies[i]), make_pair(i-4, j+1) );
-            boxPlace.emplace_back( make_pair(xies[sizeX + j]-6, yies[i]), make_pair(i-4+40, j+1) );
+            if (!cornerStartX){
+                answerNumber = j + 1;
+                if (!cornerStartY) {
+                    questionNumber = i - 4;
+                    questionNumber2 = i - 4 + sizeY;
+                }
+                if (cornerStartY){
+                    questionNumber = sizeY - i - 5;
+                    questionNumber2 = sizeY - i - 5 + sizeY;
+                }
+            }
+            if (cornerStartX){
+                answerNumber = sizeX - j;
+                if (!cornerStartY){
+                    questionNumber = i - 4  + sizeY;
+                    questionNumber2 = i - 4;
+                }
+                if(cornerStartY){
+                    questionNumber = sizeY - i - 5  + sizeY;
+                    questionNumber2 = sizeY - i - 5;
+                }
+            }
+            boxPlace.emplace_back( make_pair(xies[j]-6, yies[i]), make_pair(questionNumber, answerNumber) );
+            boxPlace.emplace_back( make_pair(xies[sizeX + j]-6, yies[i]), make_pair(questionNumber2, answerNumber) );
         }
     }
     return boxPlace;
