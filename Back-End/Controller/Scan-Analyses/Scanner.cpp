@@ -290,12 +290,11 @@ vector<pair <int,int>> Scanner::getAnswers(vector<pair <pair <int,int>, pair <in
     return answers;
 }
 
-Scanner::Scanner(const QImage &image, bool cornerStartX, bool cornerStartY)
-    : image(image) {
+Scanner::Scanner(const QImage &image, bool cornerStartX, bool cornerStartY) : image(image) {
     libconfig::Config config;
     config.readFile("server.cfg");
 
-    if(!config.lookupValue("scan.cornerStartX", cornerStartX) || !config.lookupValue("scan.cornerStartY", cornerStartY))
+    if(!config.lookupValue("scan.startCorner.right", cornerStartX) || !config.lookupValue("scan.startCorner.bottom", cornerStartY))
     {
         throw invalid_argument("Error while reading the configuration file. Make sure the information in server.cfg are correct");
     }

@@ -8,7 +8,7 @@
 #include "Scanner.h"
 #include "MainScan.h"
 
-vector<pair <int,int>> MainScan(const int& argc, char* const* argv, int id_student, int id_promotion){
+vector<pair <int,int>> MainScan(int argc, char** argv, int id_student, int id_promotion){
     QApplication a(argc, argv);
     QGraphicsScene scene;
     QGraphicsView view(&scene);
@@ -46,5 +46,5 @@ vector<pair <int,int>> MainScan(const int& argc, char* const* argv, int id_stude
     QGraphicsPixmapItem item(newImage);
     scene.addItem(&item);
     view.show();
-    return a.exec();
+    a.exec();
 }

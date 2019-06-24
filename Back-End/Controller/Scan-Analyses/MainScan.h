@@ -9,6 +9,6 @@
 using std::vector;
 using std::pair;
 
-vector<pair <int,int>> MainScan(const int& argc, char* const* argv, int id_student, int id_promotion);
+vector<pair <int,int>> MainScan(int argc, char** argv, int id_student, int id_promotion);
 
 #endif //MCQ_CORRECTION_MAINSCAN_H
