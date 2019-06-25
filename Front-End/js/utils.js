@@ -19,3 +19,9 @@ function searchTable()
         }
     }
 }
+
+function signout() {
+    Cookies.remove('token');
+    sessionStorage.clear();
+    document.location.href="index.html";
+}

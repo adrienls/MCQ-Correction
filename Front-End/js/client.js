@@ -1,13 +1,7 @@
-document.getElementById("top-form-signout").addEventListener("click", function(event) {
-    let signout = document.querySelector("#signout > option:checked");
-    console.log(signout);
-
-});
-
 function displayPromotions(promotions)
 {
     let data = JSON.parse(promotions);
-    let text = '<div class="form-group mr-2" id="top-form-signout"><button id="signout" type="submit" class="btn btn-danger">Sign out</button></div>';
+    let text = '<div class="form-group mr-2"><button onclick="signOut()" id="signout" type="submit" class="btn btn-danger">Sign out</button></div>';
     text += '<div class="form-group mr-2"><select id="promotion" class="form-control">'
     for (let i = 0; i < data.length; i++) {
         text += '<option id='+data[i].id+'>'+data[i].name+'</option>';
@@ -15,14 +9,6 @@ function displayPromotions(promotions)
     text += '</select></div>';
     sessionStorage.setItem("idPromotion", data[0].id);
     $('#top-form').append(text);
-    /*
-    document.getElementById('signout').onclick = function correctAStudent(event) {
-        Cookies.remove('token');
-        sessionStorage.clear();
-        document.location.href="index.html";
-    }
-
-     */
 }
 
 function displayExaminations(examinations)
@@ -41,7 +27,6 @@ function displayStudents(students)
 {
     //let data = JSON.parse(students);
     let data = [{"id":"1","firstname":"jean","lastname":"tomate"},{"id":"2","firstname":"sophie","lastname":"fraise"},{"id":"3","firstname":"jacques","lastname":"patate"},];
-    //let data = false;
     if (data) {
         let studentsTable = document.getElementById("studentsTBody");
         studentsTable.innerText = "";
@@ -80,6 +65,9 @@ function displayConsultStudent()
         '        <div class="form-group mr-2">\n' +
         '            <a class="btn btn-primary" href="index.html">Go home </a>\n' +
         '        </div>\n' +
+        '<div class="form-group mr-2">\n' +
+    '            <button onclick="signOut()" id="signout" type="submit" class="btn btn-danger">Sign out</button>\n' +
+    '        </div>\n' +
         '        <div id="studentInformations" class="form-group mr-2">\n' +
         '            <div class="card-text">Student: '+ sessionStorage.getItem('nameStudent') +' - Promotion '+ sessionStorage.getItem('idPromotion') +' - Examination '+ sessionStorage.getItem('idExamination') +'</div>\n' +
         '        </div>\n' +
@@ -90,18 +78,24 @@ function displayConsultStudent()
     document.getElementById('btnCorrect').onclick = function correctAStudent(event) {
         event.preventDefault();
         document.location.href="index.html#correctStudent";
-        displayCorrectStudent();
+        displayCorrectStudent('');
+        ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/correction?student_id:'+ sessionStorage.getItem('idStudent') + '&login_teacher=' + sessionStorage.getItem('nameTeacher'), displayCorrectStudent);
     }
     sessionStorage.setItem('location', "consult");
 }
 
-function displayCorrectStudent()
+function displayCorrectStudent(responses)
 {
+    //let data = JSON.parse(responses);
+    let data = [{"id":"1","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"2","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"3","1":"true","2":"false", "3":"false","4":"true", "e":"true"},];
     $('#page-top').html('    <h1 class="d-flex align-items-center justify-content-center h-100">Correct student</h1><br>\n' +
         '    <form class="form-inline d-flex justify-content-center h-100">\n' +
         '        <div class="form-group mr-2">\n' +
         '            <a class="btn btn-primary" href="index.html">Go home </a>\n' +
         '        </div>\n' +
+        '<div class="form-group mr-2">' +
+        '<button onclick="signOut()" id="signout" type="submit" class="btn btn-danger">Sign out</button>' +
+        '</div>'+
         '        <div class="form-group mr-2">\n' +
         '            <div class="card-text">Student: '+ sessionStorage.getItem('nameStudent') +' - Promotion '+ sessionStorage.getItem('idPromotion') +' - Examination '+ sessionStorage.getItem('idExamination') +'</div>\n' +
         '        </div>\n' +
@@ -123,8 +117,6 @@ function displayCorrectStudent()
             '</div>\n' +
         '<div class="col-md-6">\n' +
         '<form>\n'+'<div id="checkboxes" class="form-row">\n';
-
-    let data = [{"id":"1","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"2","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"3","1":"true","2":"false", "3":"false","4":"true", "e":"true"},];
     let nbResponses = 0;
     for(let key in data[0])
         if(data[0].hasOwnProperty(key))
@@ -146,13 +138,13 @@ function displayCorrectStudent()
     }
         text +=
             '</div>' +
-        '<button type="submit" id="saveCoorection" class="btn btn-primary">Save the correction</button>\n' +
+        '<button type="submit" id="saveCorrection" class="btn btn-primary">Save the correction</button>\n' +
         '</form>\n' +
         '</div>\n' +
         '</div>' +
         '</div>';
     $('#center-div').html(text);
-    document.getElementById('saveCoorection').onclick = function saveTheCorrection(event) {
+    document.getElementById('saveCorrection').onclick = function saveTheCorrection(event) {
         event.preventDefault();
         updateTheCorrection(data.length, nbResponses-1);
     }
@@ -173,4 +165,12 @@ function updateTheCorrection(nbQuestions, nbResponses)
         jsonData["q"+i] = row;
     }
     console.log(jsonData);
+    ajaxRequest('PUT', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/student?student_id:'+ sessionStorage.getItem('idStudent') + '&login_teacher=' + sessionStorage.getItem('nameTeacher') + '&responses:'+jsonData, displayExaminations);
+
+}
+
+function signOut() {
+    Cookies.remove('token');
+    sessionStorage.clear();
+    document.location.href = "index.html";
 }

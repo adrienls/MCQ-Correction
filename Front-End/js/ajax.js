@@ -16,12 +16,12 @@
 // \param request The request with the data.
 // \param callback The callback to call where the request is successful.
 // \param data The data associated with the request.
-function ajaxRequest(type, request, callback, data = null)
+function ajaxRequest(type, request, callback, async = false, data = null)
 {
   var xhr;
-
   // Create XML HTTP request.
   xhr = new XMLHttpRequest();
+  //xhr.async = async;
   if (type == 'GET' && data != null)
     request += '?' + data;
   xhr.open(type, request, true);
