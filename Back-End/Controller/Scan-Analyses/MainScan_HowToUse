@@ -1,0 +1,9 @@
+#include "MainScan.h"
+#include <QImage>
+#include "DownloadManager.h"
+int main(int argc, char *argv[])
+{
+    vector<pair <int,int>> answers;
+    QString stringImage;
+    MainScan(argc, argv,1 , 1 , answers, stringImage);
+}
