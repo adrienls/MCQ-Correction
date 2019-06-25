@@ -28,6 +28,7 @@ int main(int argc, char** argv) {
     // HTTPS-server at port 8080 using 1 thread
     // Unless you do more heavy non-threaded processing in the resources,
     // 1 thread is usually faster than several threads
+    //HttpsServer server("server.crt", "server.key");
     HttpsServer server("server.crt", "server.key");
     server.config.port = 8080;
 
@@ -52,7 +53,6 @@ int main(int argc, char** argv) {
             }
             db.fetchToken(token, login);
             response->write(StatusCode::success_ok, token, defaultHeaders());
-            response->write(token);
         }
         catch(const exception &e){
             response->write(StatusCode::client_error_bad_request, e.what(), defaultHeaders());

@@ -72,11 +72,11 @@ void DatabaseManager::fetchPromotions(string& jsonResponse){
     selectFields.execute(true);
 
     stringstream json;
-    json << "{";
+    json << "[";
     while (selectFields.fetch()) {
-        json << "{id_promotion:" << to_string(fields.get<int>(0)) << ", name:" << fields.get<string>(1) << "}, ";
+        json << "{'id_promotion':'" << to_string(fields.get<int>(0)) << "', 'name':'" << fields.get<string>(1) << "'}, ";
     }
-    json << "}";
+    json << "]";
 
     jsonResponse = json.str();
 }
@@ -90,15 +90,15 @@ void DatabaseManager::fetchExams(string& jsonResponse, const string& id_promotio
     selectFields.execute(true);
 
     stringstream json;
-    json << "{";
+    json << "[";
     while (selectFields.fetch()) {
-        json << "{id_examination:" << to_string(fields.get<int>(0)) << ", name:" << fields.get<string>(1) << "}, ";
+        json << "{'id_examination':'" << to_string(fields.get<int>(0)) << "', 'name':'" << fields.get<string>(1) << "'}, ";
     }
-    json << "}";
+    json << "]";
 
     jsonResponse = json.str();
 
-    if(jsonResponse == "{}"){
+    if(jsonResponse == "[]"){
         stringstream error;
         error << "Invalid id_promotion: '" << id_promotion << "' and login_teacher: '" << login_teacher <<
         "'. No entry associated to those two parameters." << endl;
@@ -114,15 +114,15 @@ void DatabaseManager::fetchStudents(string& jsonResponse, const string& id_promo
     selectFields.execute(true);
 
     stringstream json;
-    json << "{";
+    json << "[";
     while (selectFields.fetch()) {
-        json << "{id_student:" << to_string(fields.get<int>(0)) << ", firstname:" << fields.get<string>(1) << ", lastname:" << fields.get<string>(2) << "}, ";
+        json << "{'id_student':'" << to_string(fields.get<int>(0)) << "', 'firstname':'" << fields.get<string>(1) << "', 'lastname':'" << fields.get<string>(2) << "'}, ";
     }
-    json << "}";
+    json << "]";
 
     jsonResponse = json.str();
 
-    if(jsonResponse == "{}"){
+    if(jsonResponse == "[]"){
         stringstream error;
         error << "Invalid id_promotion: '" << id_promotion << "'" << ". No entry associated to this parameter." << endl;
         throw invalid_argument(error.str());
