@@ -1,7 +1,5 @@
 //modify ip-server and port in config.js
-//ajaxRequest('GET', 'php/request.php/login/', displayStudentsTable);
 ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/login?login:'+sessionStorage.getItem('nameTeacher'), displayStudentsTable);
-
 document.getElementById('authentication-send').onclick = validateLogin;
 setTimeout(function() {
     //let the program load
