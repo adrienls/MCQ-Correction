@@ -9,15 +9,15 @@
 
 #include "Scanner.h"
 #include "MainScan.h"
-#include "../DownloadManager.h"
+#include "../DownloadManager/DownloadManager.h"
 
-void MainScan(int argc, char** argv, int id_student, int id_promotion, vector<pair <int,int>> &answers, Qstring &stringImage){
+void MainScan(int argc, char** argv, int id_student, int id_promotion, vector<pair <int,int>> &answers, QString &stringImage){
     QApplication a(argc, argv);
     QGraphicsScene scene;
     QGraphicsView view(&scene);
 
     DownloadManager manager;
-    manager.doDownload(idPromotion, idStudent); // téléchargement de l'image
+    //manager.doDownload(idPromotion, idStudent); // téléchargement de l'image
 
     QPixmap image("../DownloadManager/student_answer.jpg");
 
@@ -25,8 +25,8 @@ void MainScan(int argc, char** argv, int id_student, int id_promotion, vector<pa
     QImage imageCreate(image.width(), image.height(), QImage::Format(QImage::Format_ARGB32));
 
     Scanner scan(im);
-    scan.getAnswers(&answers);
-    scan.im
+    //scan.getAnswers(&answers);
+    //scan.im
     QPixmap newImage = QPixmap::fromImage(scan.getImage());
     // display
     QGraphicsPixmapItem item(newImage);

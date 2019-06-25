@@ -2,11 +2,7 @@
 //taken from https://stackoverflow.com/questions/2262386/generate-sha256-with-openssl-and-c
 
 #include <iostream>
-#include <string>
-
-#include <iostream>
 #include <iomanip>
-#include <sstream>
 #include <openssl/sha.h>
 #include "hash.h"
 

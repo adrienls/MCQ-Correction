@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
                     password = value.second;
                 }
                 else{
-                    throw invalid_argument("Wrong Parameter! 'login' and 'password' are the only valid parameters for this request.");
+                    throw invalid_argument("Wrong Parameter! 'login' and 'password' are the only valid parameters for this request. Unknown "+value.first);
                 }
             }
             std::cerr << "Base 64 - Login: " << login << " and password: " << password << endl;

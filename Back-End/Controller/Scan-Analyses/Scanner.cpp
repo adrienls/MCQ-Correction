@@ -337,7 +337,7 @@ void Scanner::getImageToString(QString &stringImage){
     QByteArray ba;
     QBuffer buffer(&ba);
     buffer.open(QIODevice::WriteOnly);
-    stringImage.save(&buffer, "BMP");
+    //stringImage.save(&buffer, "BMP");
     QByteArray arr = qCompress(buffer.buffer(),5);
-    QString stringImage = QString(arr);
+    //QString stringImage = QString(arr);
 }
