@@ -1,12 +1,6 @@
 #include "Simple-Web-Server/client_https.hpp"
 #include "Simple-Web-Server/server_https.hpp"
 
-// Added for the default_resource example
-#include <algorithm>
-#include <boost/filesystem.hpp>
-#include <fstream>
-#include <vector>
-
 #include "Simple-Web-Server/crypto.hpp"
 #include "Model/DatabaseManager.h"
 #include "Controller/base64.h"
@@ -18,6 +12,10 @@ using std::shared_ptr;
 using std::invalid_argument;
 using std::exception;
 using std::thread;
+using std::stringstream;
+using std::endl;
+
+using SimpleWeb::StatusCode;
 
 using HttpsServer = SimpleWeb::Server<SimpleWeb::HTTPS>;
 using HttpsClient = SimpleWeb::Client<SimpleWeb::HTTPS>;
@@ -36,6 +34,9 @@ int main(int argc, char** argv) {
             string token;
 
             SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            if(parameters.empty()){
+                throw invalid_argument("Empty Parameter! You need a 'login' parameter for this request.");
+            }
             string login;
             for(const auto& value : parameters){
                 if(value.first == "login"){
@@ -46,11 +47,11 @@ int main(int argc, char** argv) {
                 }
             }
             db.fetchToken(token, login);
-            *response << validHeaders(request->http_version);
+            response->write(StatusCode::success_ok, token, defaultHeaders());
             response->write(token);
         }
         catch(const exception &e){
-            *response << invalidHeaders(request->http_version) << "\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
+            response->write(StatusCode::client_error_bad_request, e.what(), defaultHeaders());
         }
     };
 
@@ -60,6 +61,9 @@ int main(int argc, char** argv) {
             DatabaseManager db;
 
             SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            if(parameters.empty()){
+                throw invalid_argument("Empty Parameter! You need 'login' and 'password' parameters for this request.");
+            }
             string login, password;
             for(const auto& value : parameters){
                 if(value.first == "login"){
@@ -72,19 +76,26 @@ int main(int argc, char** argv) {
                     throw invalid_argument("Wrong Parameter! 'login' and 'password' are the only valid parameters for this request.");
                 }
             }
-            login = decode(login);
-            password = decode(password);
+            std::cerr << "Base 64 - Login: " << login << " and password: " << password << endl;
+
+            login = decode_base64(login);
+            password = decode_base64(password);
             string hash = sha512(password);
+
+            std::cerr << "Normal - Login: " << login << " and password: " << password << endl;
+
+            if(!db.checkUser(login, hash)){
+                throw invalid_argument("User does not exist!");
+            }
 
             unsigned char* randomToken;
             RAND_bytes(randomToken, 30);
             string token = (char*)randomToken;
             db.addToken(token, login);
-            *response << validHeaders(request->http_version);
-            response->write(token);
+            response->write(StatusCode::success_ok, token, defaultHeaders());
         }
         catch(const exception &e){
-            *response << invalidHeaders(request->http_version) << "\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
+            response->write(StatusCode::client_error_bad_request, e.what(), defaultHeaders());
         }
     };
 
@@ -94,11 +105,10 @@ int main(int argc, char** argv) {
             DatabaseManager db;
             string jsonResponse;
             db.fetchPromotions(jsonResponse);
-            *response << validHeaders(request->http_version);
-            response->write(jsonResponse);
+            response->write(StatusCode::success_ok, jsonResponse, defaultHeaders());
         }
         catch(const exception &e){
-            *response << invalidHeaders(request->http_version) << "\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
+            response->write(StatusCode::client_error_bad_request, e.what(), defaultHeaders());
         }
     };
 
@@ -110,6 +120,9 @@ int main(int argc, char** argv) {
             string jsonResponse;
 
             SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            if(parameters.empty()){
+                throw invalid_argument("Empty Parameter! You need 'id_promotion' and 'login_teacher' parameters for this request.");
+            }
             string id, login;
             for(const auto& value : parameters){
                 if(value.first == "id_promotion"){
@@ -123,11 +136,10 @@ int main(int argc, char** argv) {
                 }
             }
             db.fetchExams(jsonResponse, id, login);
-            *response << validHeaders(request->http_version);
-            response->write(jsonResponse);
+            response->write(StatusCode::success_ok, jsonResponse, defaultHeaders());
         }
         catch(const exception &e){
-            *response << invalidHeaders(request->http_version) << "\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
+            response->write(StatusCode::client_error_bad_request, e.what(), defaultHeaders());
         }
     };
 
@@ -138,6 +150,9 @@ int main(int argc, char** argv) {
             string jsonResponse;
 
             SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            if(parameters.empty()){
+                throw invalid_argument("Empty Parameter! You need a 'id_promotion' parameter for this request.");
+            }
             string id;
             for(const auto& value : parameters){
                 if(value.first == "id_promotion"){
@@ -148,11 +163,24 @@ int main(int argc, char** argv) {
                 }
             }
             db.fetchStudents(jsonResponse, id);
-            *response << validHeaders(request->http_version);
-            response->write(jsonResponse);
+            response->write(StatusCode::success_ok, jsonResponse, defaultHeaders());
         }
         catch(const exception &e){
-            *response << invalidHeaders(request->http_version) << "\r\nContent-Length: " << strlen(e.what()) << "\r\n\r\n" << e.what();
+            response->write(StatusCode::client_error_bad_request, e.what(), defaultHeaders());
+        }
+    };
+
+    // Default GET-example. If no other matches, this anonymous function will be called.
+    // Can for instance be used to retrieve an HTML 5 client that uses REST-resources on this server
+    server.default_resource["GET"] = [](shared_ptr<HttpsServer::Response> response, shared_ptr<HttpsServer::Request> request) {
+        const string& resource = request->path;
+        if(resource == "/"){
+            response->write(StatusCode::client_error_bad_request, "No resource specified! Please specify a resource with the corresponding parameters.", defaultHeaders());
+        }
+        else{
+            stringstream errorQuery;
+            errorQuery << "Wrong query! " << endl << resource << " is not an available resource." << endl;
+            response->write(StatusCode::client_error_bad_request, errorQuery.str(), defaultHeaders());
         }
     };
 

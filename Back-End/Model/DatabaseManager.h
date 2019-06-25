@@ -42,6 +42,7 @@ public:
         }
     }
 
+    bool checkUser(const string& login, const string& password);
     void addToken(const string& token, const string& login);
 
     //void fetchData(const map<string, string>& fields, const string& table, const map<string, string>& where = {});

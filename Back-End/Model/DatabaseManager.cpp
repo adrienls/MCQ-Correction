@@ -25,109 +25,114 @@ DatabaseManager::DatabaseManager() {
 void DatabaseManager::connect() {
     stringstream connection;
     connection << "mysql://db=" << db << " host=" << ip << " user=" << user <<  " password='" << password << "'";
-    try {
-        session = new soci::session(connection.str());
-        soci::statement setEncoding = (session->prepare << "SET NAMES utf8");
-        setEncoding.execute(true);
-    }
-    catch (const exception &e) {
-        cerr << "Error: " << e.what() << endl;
-    }
-
+    session = new soci::session(connection.str());
+    soci::statement setEncoding = (session->prepare << "SET NAMES utf8");
+    setEncoding.execute(true);
 }
 
+bool DatabaseManager::checkUser(const string& login, const string& password){
+    soci::row fields;
+    soci::statement selectFields = (session->prepare <<
+            "SELECT * FROM teacher WHERE BINARY login = :login AND password = :password",
+            /*
+             * the BINARY key word in the request avoids a collation error:
+             * "Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (utf8_general_ci,COERCIBLE) for operation '='"
+             */
+            soci::use(login, "login"),
+            soci::use(password, "password"),
+            soci::into(fields));
+    selectFields.execute(true);
+
+    if(selectFields.fetch()){
+        return true;
+    }
+    return false;
+}
 void DatabaseManager::addToken(const string& token, const string &login) {
-    try {
-        soci::row fields;
-        soci::statement selectFields = (session->prepare <<
-                "UPDATE teacher SET token = :token WHERE login = :login",
-                soci::use(token, "token"),
-                soci::use(login, "login"),
-                soci::into(fields));
-        selectFields.execute(true);
-    }
-    catch (const std::exception &e) {
-        cerr << "Error: " << e.what() << endl;
-    }
+    soci::row fields;
+    soci::statement selectFields = (session->prepare <<
+            "UPDATE teacher SET token = :token WHERE login = :login",
+            soci::use(token, "token"),
+            soci::use(login, "login"),
+            soci::into(fields));
+    selectFields.execute(true);
 }
 
 void DatabaseManager::fetchToken(string& token, const string& login){
-    try {
-        soci::row fields;
-        soci::statement selectFields = (session->prepare <<
-                "SELECT token FROM teacher WHERE login = :login",
-                soci::use(login, "login"),
-                soci::into(fields));
-        selectFields.execute(true);
+    soci::row fields;
+    soci::statement selectFields = (session->prepare <<
+            "SELECT token FROM teacher WHERE login = :login",
+            soci::use(login, "login"),
+            soci::into(fields));
+    selectFields.execute(true);
 
-        token = fields.get<string>(0);
-    }
-    catch (const std::exception &e) {
-        cerr << "Error: " << e.what() << endl;
+    token = fields.get<string>(0);
+    if(token.empty()){
+        stringstream error;
+        error << "Invalid login: '" << login << "'" << endl;
+        throw invalid_argument(error.str());
     }
 }
 void DatabaseManager::fetchPromotions(string& jsonResponse){
-    try {
-        soci::row fields;
-        soci::statement selectFields = (session->prepare << "SELECT id_promotion, name FROM promotion", soci::into(fields));
-        selectFields.execute(true);
+    soci::row fields;
+    soci::statement selectFields = (session->prepare << "SELECT id_promotion, name FROM promotion", soci::into(fields));
+    selectFields.execute(true);
 
-        stringstream json;
-        json << "{";
-        do {
-            json << "{id_promotion:" << to_string(fields.get<int>(0)) << ", name:" << fields.get<string>(1) << "}, ";
-        } while (selectFields.fetch());
-        json << "}";
+    stringstream json;
+    json << "{";
+    while (selectFields.fetch()) {
+        json << "{id_promotion:" << to_string(fields.get<int>(0)) << ", name:" << fields.get<string>(1) << "}, ";
+    }
+    json << "}";
 
-        jsonResponse = json.str();
-    }
-    catch (const std::exception &e) {
-        cerr << "Error: " << e.what() << endl;
-    }
+    jsonResponse = json.str();
 }
 void DatabaseManager::fetchExams(string& jsonResponse, const string& id_promotion, const string& login_teacher){
-    try {
-        soci::row fields;
-        soci::statement selectFields = (session->prepare <<
-                "SELECT id_examination, name FROM examination WHERE id_promotion = :id AND login_teacher = :login",
-                soci::use(id_promotion, "id"),
-                soci::use(login_teacher, "login"),
-                soci::into(fields));
-        selectFields.execute(true);
+    soci::row fields;
+    soci::statement selectFields = (session->prepare <<
+            "SELECT id_examination, name FROM examination WHERE id_promotion = :id AND login_teacher = :login",
+            soci::use(id_promotion, "id"),
+            soci::use(login_teacher, "login"),
+            soci::into(fields));
+    selectFields.execute(true);
 
-        stringstream json;
-        json << "{";
-        do {
-            json << "{id_examination:" << to_string(fields.get<int>(0)) << ", name:" << fields.get<string>(1) << "}, ";
-        } while (selectFields.fetch());
-        json << "}";
-
-        jsonResponse = json.str();
+    stringstream json;
+    json << "{";
+    while (selectFields.fetch()) {
+        json << "{id_examination:" << to_string(fields.get<int>(0)) << ", name:" << fields.get<string>(1) << "}, ";
     }
-    catch (const std::exception &e) {
-        cerr << "Error: " << e.what() << endl;
+    json << "}";
+
+    jsonResponse = json.str();
+
+    if(jsonResponse == "{}"){
+        stringstream error;
+        error << "Invalid id_promotion: '" << id_promotion << "' and login_teacher: '" << login_teacher <<
+        "'. No entry associated to those two parameters." << endl;
+        throw invalid_argument(error.str());
     }
 }
 void DatabaseManager::fetchStudents(string& jsonResponse, const string& id_promotion){
-    try {
-        soci::row fields;
-        soci::statement selectFields = (session->prepare <<
-                "SELECT id_student, firstname, lastname FROM student WHERE id_promotion = :id",
-                soci::use(id_promotion, "id"),
-                soci::into(fields));
-        selectFields.execute(true);
+    soci::row fields;
+    soci::statement selectFields = (session->prepare <<
+            "SELECT id_student, firstname, lastname FROM student WHERE id_promotion = :id",
+            soci::use(id_promotion, "id"),
+            soci::into(fields));
+    selectFields.execute(true);
 
-        stringstream json;
-        json << "{";
-        do {
-            json << "{id_student:" << to_string(fields.get<int>(0)) << ", firstname:" << fields.get<string>(1) << ", lastname:" << fields.get<string>(2) << "}, ";
-        } while (selectFields.fetch());
-        json << "}";
-
-        jsonResponse = json.str();
+    stringstream json;
+    json << "{";
+    while (selectFields.fetch()) {
+        json << "{id_student:" << to_string(fields.get<int>(0)) << ", firstname:" << fields.get<string>(1) << ", lastname:" << fields.get<string>(2) << "}, ";
     }
-    catch (const std::exception &e) {
-        cerr << "Error: " << e.what() << endl;
+    json << "}";
+
+    jsonResponse = json.str();
+
+    if(jsonResponse == "{}"){
+        stringstream error;
+        error << "Invalid id_promotion: '" << id_promotion << "'" << ". No entry associated to this parameter." << endl;
+        throw invalid_argument(error.str());
     }
 }
 
