@@ -18,10 +18,8 @@ class DownloadManager: public QObject
 {
 Q_OBJECT
     QNetworkAccessManager manager;
-
 private:
     std::string ip_server;
-
 public:
     DownloadManager();
     void doDownload(const int &idPromotion, const int &idStudent);
