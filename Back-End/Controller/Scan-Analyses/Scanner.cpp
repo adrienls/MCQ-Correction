@@ -4,7 +4,10 @@
 
 #include "Scanner.h"
 #include <libconfig.h++>
+#include <QPen>
 #include <cmath>
+#include <QByteArray>
+#include <QBuffer>
 using std::invalid_argument;
 using std::make_pair;
 
@@ -295,11 +298,11 @@ void Scanner::drawCircle(int x, int y){
     circle.drawEllipse(x-6, y-6, 40, 40);
 }
 
-vector<pair <int,int>> Scanner::getAnswers(vector<pair <pair <int,int>, pair <int,int>>> boxPosition){
+vector<pair <int,int>> Scanner::getAnswers(vector<pair <int,int>> &answers){
+    vector<pair <pair <int,int>, pair <int,int>>> boxPosition = boxPositions();
     int x;
     int y;
     int size = (int)boxPosition.size();
-    vector<pair <int,int>> answers;
     for (int i = 0; i < size; i++){
         x = boxPosition[i].first.first;
         y = boxPosition[i].first.second;
@@ -328,4 +331,13 @@ int Scanner::getStartX() const {
 
 int Scanner::getStartY() const {
     return startY;
+}
+
+void Scanner::getImageToString(QString &stringImage){
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    stringImage.save(&buffer, "BMP");
+    QByteArray arr = qCompress(buffer.buffer(),5);
+    QString stringImage = QString(arr);
 }
