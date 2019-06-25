@@ -6,9 +6,10 @@
 #define MCQ_CORRECTION_MAINSCAN_H
 
 #include <vector>
+#include <QString>
 using std::vector;
 using std::pair;
 
-vector<pair <int,int>> MainScan(int argc, char** argv, int id_student, int id_promotion);
+void MainScan(int argc, char** argv, int id_student, int id_promotion, vector<pair <int,int>> &answers, QString &stringImage);
 
 #endif //MCQ_CORRECTION_MAINSCAN_H
