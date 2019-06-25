@@ -5,7 +5,7 @@
 #include <QCoreApplication>
 #include "Scanner.h"
 #include "MainScan.h"
-#include "DownloadManager.h"
+#include "../DownloadManager.h"
 
 void MainScan(int argc, char** argv, int id_student, int id_promotion, vector<pair <int,int>> &answers, QString &stringImage){
     QCoreApplication downloadApp(argc, argv);
