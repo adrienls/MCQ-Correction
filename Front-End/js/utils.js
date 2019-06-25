@@ -1,4 +1,6 @@
-function searchTable() {
+// https://www.w3schools.com/howto/howto_js_filter_table.asp
+function searchTable()
+{
     let input = document.getElementById("searchInput");
     let filter = input.value.toUpperCase();
     let table = document.getElementById("studentsTable");
@@ -16,4 +18,14 @@ function searchTable() {
             }
         }
     }
+}
+
+function createbuttonSignOut(div) {
+    //$(div).append('<button id="signout" type="submit" class="btn btn-danger">Sign out</button>');
+    document.getElementById('signout').onclick = function signOut() {
+        Cookies.remove('token');
+        sessionStorage.clear();
+        document.location.href="index.html";
+    };
+    return '<button id="signout" type="submit" class="btn btn-danger">Sign out</button>';
 }

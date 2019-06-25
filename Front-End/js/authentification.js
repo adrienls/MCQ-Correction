@@ -1,7 +1,9 @@
-//ajaxRequest('GET', 'php/request.php/login/', displayStudentsTable); // verify user is connected
+ajaxRequest('GET', 'php/request.php/login/', displayStudentsTable);
 ajaxRequest('GET', 'https://10.16.1.38:8080/login?login='+sessionStorage.getItem('nameTeacher'), displayStudentsTable);
 document.getElementById('authentication-send').onclick = validateLogin;
-
+setTimeout(function() {
+    //let the program load
+}, 1000);
 function ajaxLogin(type, request, callback, login ,password, data = null)
 {
     let xhr;
@@ -17,7 +19,7 @@ function ajaxLogin(type, request, callback, login ,password, data = null)
             case 200:
             case 201:
                 callback(xhr.responseText);
-                //ajaxRequest('GET', 'php/request.php/login/',displayStudentsTable);
+                ajaxRequest('GET', 'php/request.php/login/',displayStudentsTable);
                 ajaxRequest('GET', 'https://10.16.1.38:8080/login?login='+btoa(login)+'&password='+btoa(password), displayStudentsTable);
                 break;
             default:
@@ -38,7 +40,7 @@ function validateLogin(event)
     let login = document.getElementById('inputLogin').value;
     let password = document.getElementById('inputPassword').value;
     sessionStorage.setItem('nameTeacher', login);
-    //ajaxLogin('GET', 'php/request.php/authenticate/', setTokenCookie, login, password);
+    ajaxLogin('GET', 'php/request.php/authenticate/', setTokenCookie, login, password);
     ajaxLogin('GET', 'https://10.16.1.38:8080/authenticate?login='+btoa(login)+'&password='+btoa(password), setTokenCookie, login, password);
 }
 
@@ -65,12 +67,18 @@ function displayStudentsTable(response)
         '            </div>\n' +
         '    </div>');
 
-    //ajaxRequest('GET', 'php/request.php/groups/', displayPromotions);
-    //ajaxRequest('GET', 'php/request.php/groups/', displayExaminations);
+    ajaxRequest('GET', 'php/request.php/groups/', displayPromotions);
+    ajaxRequest('GET', 'php/request.php/groups/', displayExaminations);
 
     ajaxRequest('GET', 'https://10.16.1.38:8080/promotion', displayPromotions);
     ajaxRequest('GET', 'https://10.16.1.38:8080/examination?id_promotion'+ sessionStorage.getItem('idPromotion') + '&login_teacher=' + sessionStorage.getItem('nameTeacher'), displayExaminations);
 
+    document.getElementById('form-signout').addEventListener("click", function (event) {
+        event.preventDefault();
+        let signout = document.querySelector("#signout > option:checked");
+        console.log(signout);
+
+    })
     document.getElementById("top-form").addEventListener("click", function(event)
     {
         event.preventDefault();
@@ -80,7 +88,7 @@ function displayStudentsTable(response)
         sessionStorage.setItem("idExamination", examination.id);
         $('#studentsTHead').html('<tr><th colspan="4">Students for the promotion '+ promotion.value +' and the ' + examination.value + '</th></tr>');
         ajaxRequest('GET', 'https://10.16.1.38:8080/student?id_promotion=' + sessionStorage.getItem('idPromotion'), displayStudents);
-        //ajaxRequest('GET', 'php/request.php/student?groupId='+promotion.id, displayStudents);
+        ajaxRequest('GET', 'php/request.php/student?groupId='+promotion.id, displayStudents);
     });
 }
 

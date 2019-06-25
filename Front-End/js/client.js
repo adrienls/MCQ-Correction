@@ -1,13 +1,27 @@
+document.getElementById("top-form-signout").addEventListener("click", function(event) {
+    let signout = document.querySelector("#signout > option:checked");
+    console.log(signout);
+});
+
 function displayPromotions(promotions)
 {
     let data = JSON.parse(promotions);
-    let text = '<div class="form-group mr-2"><select id="promotion" class="form-control">'
+    let text = '<div class="form-group mr-2" id="top-form-signout"><button id="signout" type="submit" class="btn btn-danger">Sign out</button></div>';
+    text += '<div class="form-group mr-2"><select id="promotion" class="form-control">'
     for (let i = 0; i < data.length; i++) {
         text += '<option id='+data[i].id+'>'+data[i].name+'</option>';
     }
     text += '</select></div>';
     sessionStorage.setItem("idPromotion", data[0].id);
     $('#top-form').append(text);
+    /*
+    document.getElementById('signout').onclick = function correctAStudent(event) {
+        Cookies.remove('token');
+        sessionStorage.clear();
+        document.location.href="index.html";
+    }
+
+     */
 }
 
 function displayExaminations(examinations)
@@ -24,8 +38,8 @@ function displayExaminations(examinations)
 
 function displayStudents(students)
 {
-    let data = JSON.parse(students);
-    //let data = [{"id":"1","firstname":"jean","lastname":"tomate"},{"id":"2","firstname":"sophie","lastname":"fraise"},{"id":"3","firstname":"jacques","lastname":"patate"},];
+    //let data = JSON.parse(students);
+    let data = [{"id":"1","firstname":"jean","lastname":"tomate"},{"id":"2","firstname":"sophie","lastname":"fraise"},{"id":"3","firstname":"jacques","lastname":"patate"},];
     //let data = false;
     if (data) {
         let studentsTable = document.getElementById("studentsTBody");
@@ -33,14 +47,14 @@ function displayStudents(students)
         for(let item of data)
         {
             tr = document.createElement('tr');
-            tr.innerHTML = "<td id=\"idStudent"+item.id+"\">" + item.id_student + "</td>" +
+            tr.innerHTML = "<td id=\"idStudent"+item.id+"\">" + item.id + "</td>" +
                 "<td><span id=\"nameStudent"+item.id+"\"  >"+item.firstname + ' ' +  item.lastname+ "\</td>" +
                 "<td><button id=\"consult"+item.id+"\" class=\"btn btn-success\">Consult</button></td>" +
                 "<td><button id=\"correct"+item.id+"\" class=\"btn btn-danger\">Correct</button></td>";
             studentsTable.appendChild(tr);
 
             document.getElementById("consult" + item.id).addEventListener("click", function (event) {
-                //let button = event.target;
+                console.log(document.getElementById('idStudent'+item.id));
                 sessionStorage.setItem("idStudent", document.getElementById('idStudent'+item.id).innerText);
                 sessionStorage.setItem("nameStudent", document.getElementById('nameStudent'+item.id).innerText);
                 displayConsultStudent();
@@ -77,6 +91,7 @@ function displayConsultStudent()
         document.location.href="index.html#correctStudent";
         displayCorrectStudent();
     }
+    sessionStorage.setItem('location', "consult");
 }
 
 function displayCorrectStudent()
@@ -91,7 +106,7 @@ function displayCorrectStudent()
         '        </div>\n' +
         '    </form><br><br>');
     let urlImage = "http://10.0.1.49/"+sessionStorage.getItem('idExamination')+'/'+sessionStorage.getItem('idStudent')+".jpg";
-
+    sessionStorage.setItem('location', "correct");
     let text =
         '<div class="row align-content-center">' +
             '<div class="col-md-6">' +
