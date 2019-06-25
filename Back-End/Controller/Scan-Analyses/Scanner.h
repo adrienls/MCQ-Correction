@@ -1,6 +1,10 @@
+//
+// Created by jerem on 19/06/2019.
+//
 
 #ifndef SCAN_PROTOTYPE2_SCANNER_H
 #define SCAN_PROTOTYPE2_SCANNER_H
+
 
 #include <iostream>
 #include <QApplication>
@@ -36,7 +40,7 @@ public:
     // Renvoie la position en X (orientation = false) de toute les bandes, pour Y (orientation = true).
 
     vector<int> oppositePositions (bool orientation = false);
-    // Renvoie la position en X (orientation = false) de toute les bandes du coté opposé, pour Y (orientation = true).
+// Renvoie la position en X (orientation = false) de toute les bandes du coté opposé, pour Y (orientation = true).
 
     float getInclination(int firstValue, int secondValue);
 
@@ -50,21 +54,13 @@ public:
     void drawCircle(int x, int y);
     // Dessine un cercle rouge autour du point indiqué
 
-    vector<pair <int,int>> getAnswers(vector<pair <pair <int,int>, pair <int,int>>> boxPosition);
+    vector<pair <int,int>> getAnswers(vector<pair <int,int>> &answers);
     // Renvoie les réponse de l'éleve détectées et dessine une cercle autour de celle-ci.
     // Enregistre ensuite l'image modifée.
 
-    void debugImage(int x, int y){
-        for (int i = 0; i < 10; i++){
-            for (int j = 0; j < 10; j++){
-                image.setPixel(x+i, y+j, qRgb(255, 0, 0));
-            }
-        }
-    }
-
-    QImage getImage(){
-        return this->image;
-    }
+    void getImageToString(QString &stringImage);
+    QImage getImage() { return this->image; };
 };
+
 
 #endif //SCAN_PROTOTYPE2_SCANNER_H
