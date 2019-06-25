@@ -132,7 +132,7 @@ namespace SimpleWeb {
           name_end_pos = std::string::npos;
           value_pos = std::string::npos;
         }
-        else if(query_string[c] == '=') {
+        else if(query_string[c] == ':') {
           name_end_pos = c;
           value_pos = c + 1;
         }

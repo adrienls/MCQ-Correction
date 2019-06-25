@@ -1,3 +1,5 @@
+#include <QImage>
+
 #include "Simple-Web-Server/client_https.hpp"
 #include "Simple-Web-Server/server_https.hpp"
 
@@ -7,6 +9,8 @@
 #include "Controller/hash.h"
 #include "Controller/httpHeaders.h"
 #include "Controller/Scan-Analyses/MainScan.h"
+#include "Controller/DownloadManager.h"
+#include "Controller/token.h"
 
 using std::shared_ptr;
 using std::invalid_argument;
@@ -27,7 +31,7 @@ int main(int argc, char** argv) {
     HttpsServer server("server.crt", "server.key");
     server.config.port = 8080;
 
-    server.resource["^/login"]["GET"] = [](shared_ptr<HttpsServer::Response> response,
+    server.resource["^/login$"]["GET"] = [](shared_ptr<HttpsServer::Response> response,
                                                 shared_ptr<HttpsServer::Request> request) {
         try{
             DatabaseManager db;
@@ -73,25 +77,20 @@ int main(int argc, char** argv) {
                     password = value.second;
                 }
                 else{
-                    throw invalid_argument("Wrong Parameter! 'login' and 'password' are the only valid parameters for this request. Unknown "+value.first);
+                    throw invalid_argument("Wrong Parameter! 'login' and 'password' are the only valid parameters for this request.");
                 }
             }
-            std::cerr << "Base 64 - Login: " << login << " and password: " << password << endl;
 
             login = decode_base64(login);
             password = decode_base64(password);
-            string hash = sha512(password);
 
-            std::cerr << "Normal - Login: " << login << " and password: " << password << endl;
-
-            if(!db.checkUser(login, hash)){
+            if(!db.checkUser(login, sha512(password))){
                 throw invalid_argument("User does not exist!");
             }
 
-            unsigned char* randomToken;
-            RAND_bytes(randomToken, 30);
-            string token = (char*)randomToken;
+            string token = random_string(40);
             db.addToken(token, login);
+
             response->write(StatusCode::success_ok, token, defaultHeaders());
         }
         catch(const exception &e){
@@ -198,7 +197,17 @@ int main(int argc, char** argv) {
  *
  */
 /*
-int main(int argc, char** argv) {
-
+#include "Controller/Scan-Analyses/MainScan.h"
+#include <QImage>
+#include "Controller/DownloadManager.h"
+int main(int argc, char *argv[])
+{
+    vector<pair <int,int>> answers;
+    QString stringImage;
+    MainScan(argc, argv , 1, 4, answers, stringImage);
+    std::cerr << stringImage.toStdString() << std::endl;
+    for(const auto& val : answers){
+        std::cerr << "Question :" << val.first << " ------ Réponse: " << val.second << std::endl;
+    }
 }
  */

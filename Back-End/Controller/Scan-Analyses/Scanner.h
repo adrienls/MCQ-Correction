@@ -28,7 +28,7 @@ public:
     int getStartX() const;
     int getStartY() const;
 
-    virtual ~Scanner(){};
+    virtual ~Scanner() = default;
     Scanner(const QImage &image, bool cornerStartX = false, bool cornerStartY = false);
 
     void findStart(); // Renvoie la coordonée du carré de réference en haut à gauche
@@ -40,7 +40,7 @@ public:
     // Renvoie la position en X (orientation = false) de toute les bandes, pour Y (orientation = true).
 
     vector<int> oppositePositions (bool orientation = false);
-// Renvoie la position en X (orientation = false) de toute les bandes du coté opposé, pour Y (orientation = true).
+    // Renvoie la position en X (orientation = false) de toute les bandes du coté opposé, pour Y (orientation = true).
 
     float getInclination(int firstValue, int secondValue);
 

@@ -14,15 +14,16 @@
 #include <QUrl>
 #include <libconfig.h++>
 
-class DownloadManager: public QObject
-{
-Q_OBJECT
-    QNetworkAccessManager manager;
+class DownloadManager: public QObject {
+    Q_OBJECT
 private:
     std::string ip_server;
+
 public:
+    QNetworkAccessManager manager;
     DownloadManager();
     void doDownload(const int &idPromotion, const int &idStudent);
+    virtual ~DownloadManager() = default;
 
 public slots:
     void downloadFinished(QNetworkReply *reply);

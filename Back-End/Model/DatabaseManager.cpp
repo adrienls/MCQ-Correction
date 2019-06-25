@@ -33,20 +33,13 @@ void DatabaseManager::connect() {
 bool DatabaseManager::checkUser(const string& login, const string& password){
     soci::row fields;
     soci::statement selectFields = (session->prepare <<
-            "SELECT * FROM teacher WHERE BINARY login = :login AND password = :password",
-            /*
-             * the BINARY key word in the request avoids a collation error:
-             * "Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (utf8_general_ci,COERCIBLE) for operation '='"
-             */
+            "SELECT login FROM teacher WHERE login = :login AND password = :password",
             soci::use(login, "login"),
             soci::use(password, "password"),
             soci::into(fields));
     selectFields.execute(true);
 
-    if(selectFields.fetch()){
-        return true;
-    }
-    return false;
+    return !fields.get<string>(0).empty();
 }
 void DatabaseManager::addToken(const string& token, const string &login) {
     soci::row fields;
