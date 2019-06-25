@@ -19,13 +19,3 @@ function searchTable()
         }
     }
 }
-
-function createbuttonSignOut(div) {
-    //$(div).append('<button id="signout" type="submit" class="btn btn-danger">Sign out</button>');
-    document.getElementById('signout').onclick = function signOut() {
-        Cookies.remove('token');
-        sessionStorage.clear();
-        document.location.href="index.html";
-    };
-    return '<button id="signout" type="submit" class="btn btn-danger">Sign out</button>';
-}

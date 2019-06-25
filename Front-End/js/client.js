@@ -1,6 +1,7 @@
 document.getElementById("top-form-signout").addEventListener("click", function(event) {
     let signout = document.querySelector("#signout > option:checked");
     console.log(signout);
+
 });
 
 function displayPromotions(promotions)

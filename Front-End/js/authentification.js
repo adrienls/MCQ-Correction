@@ -1,6 +1,7 @@
 ajaxRequest('GET', 'php/request.php/login/', displayStudentsTable);
 ajaxRequest('GET', 'https://10.16.1.38:8080/login?login='+sessionStorage.getItem('nameTeacher'), displayStudentsTable);
 document.getElementById('authentication-send').onclick = validateLogin;
+
 setTimeout(function() {
     //let the program load
 }, 1000);
