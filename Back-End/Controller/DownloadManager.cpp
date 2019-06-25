@@ -32,7 +32,7 @@ void DownloadManager::downloadFinished(QNetworkReply *reply)
     if (reply->error()) {
         throw invalid_argument("Download image failed"); //url.toEncoded().constData()
     }
-    QFile file("student_answser.jpg");
+    QFile file("student_answer.jpg");
     if (!file.open(QIODevice::WriteOnly) || !file.write(reply->readAll()))
     {
         throw invalid_argument("Save image failed");
@@ -42,5 +42,4 @@ void DownloadManager::downloadFinished(QNetworkReply *reply)
     reply->deleteLater();
     QCoreApplication::instance()->quit();
 }
-
 
