@@ -19,9 +19,10 @@ DownloadManager::DownloadManager()
 }
 
 
-void DownloadManager::doDownload(const int &idPromotion, const int &idStudent)
+void DownloadManager::doDownload(const int &id_examination, const int &idStudent)
 {
-    QUrl qurl = QString::fromStdString("http://"+ip_server+"/"+std::to_string(idPromotion)+"/"+std::to_string(idStudent)+".jpg");
+    //QUrl qurl = QString::fromStdString("http://"+ip_server+"/"+std::to_string(id_examination)+"/"+std::to_string(idStudent)+".jpg");
+    QUrl qurl = QString::fromStdString("https://gaminisen.fr/2/10.jpg");
     QNetworkRequest request(qurl);
     manager.get(request);
 }

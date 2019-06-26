@@ -1,23 +1,29 @@
+function removeLastComma(string)
+{
+    let regex = /\,(?!\s*?[\{\[\"\'\w])/g;
+    return string.replace(regex, '');
+}
 function displayPromotions(promotions)
 {
-    let data = JSON.parse(promotions);
+    promotions = removeLastComma(promotions);
+    promotions = JSON.parse(promotions);
     let text = '<div class="form-group mr-2"><button onclick="signOut()" id="signout" type="submit" class="btn btn-danger">Sign out</button></div>';
     text += '<div class="form-group mr-2"><select id="promotion" class="form-control">'
-    for (let i = 0; i < data.length; i++) {
-        text += '<option id='+data[i].id+'>'+data[i].name+'</option>';
+    for (let i = 0; i < promotions.length; i++) {
+        text += '<option id='+promotions[i].id_promotion+'>'+promotions[i].name+'</option>';
     }
     text += '</select></div>';
-    sessionStorage.setItem("idPromotion", data[0].id);
+    sessionStorage.setItem("idPromotion", promotions[0].id_promotion);
     $('#top-form').append(text);
 }
 
 function displayExaminations(examinations)
 {
-    //let data = [{"id":"1","name":"examination1"},{"id":"2","name":"examination2"},];
+    examinations = removeLastComma(examinations);
     let data = JSON.parse(examinations);
     let text = '<div class="form-group mr-2"><select id="examination" class="form-control">'
     for (let i = 0; i < data.length; i++) {
-        text += '<option id='+data[i].id+'>'+data[i].name+'</option>';
+        text += '<option id='+data[i].id_examination+'>'+data[i].name+'</option>';
     }
     text += '</select></div><button id="chooseExamination" type="submit" class="btn btn-primary">Choose</button>';
     $('#top-form').append(text);
@@ -25,30 +31,28 @@ function displayExaminations(examinations)
 
 function displayStudents(students)
 {
-    //let data = JSON.parse(students);
-    let data = [{"id":"1","firstname":"jean","lastname":"tomate"},{"id":"2","firstname":"sophie","lastname":"fraise"},{"id":"3","firstname":"jacques","lastname":"patate"},];
+    students = removeLastComma(students);
+    let data = JSON.parse(students);
     if (data) {
         let studentsTable = document.getElementById("studentsTBody");
         studentsTable.innerText = "";
         for(let item of data)
         {
             tr = document.createElement('tr');
-            tr.innerHTML = "<td id=\"idStudent"+item.id+"\">" + item.id + "</td>" +
-                "<td><span id=\"nameStudent"+item.id+"\"  >"+item.firstname + ' ' +  item.lastname+ "\</td>" +
-                "<td><button id=\"consult"+item.id+"\" class=\"btn btn-success\">Consult</button></td>" +
-                "<td><button id=\"correct"+item.id+"\" class=\"btn btn-danger\">Correct</button></td>";
+            tr.innerHTML = "<td id=\"idStudent"+item.id_student+"\" hidden='true'>"+ item.id_student +"</td>" +
+                "<td><span id=\"nameStudent"+item.id_student+"\"  >"+item.firstname + ' ' +  item.lastname+ "\</td>" +
+                "<td><button id=\"consult"+item.id_student+"\" class=\"btn btn-success\">Consult</button></td>" +
+                "<td><button id=\"correct"+item.id_student+"\" class=\"btn btn-danger\">Correct</button></td>";
             studentsTable.appendChild(tr);
 
-            document.getElementById("consult" + item.id).addEventListener("click", function (event) {
-                console.log(document.getElementById('idStudent'+item.id));
-                sessionStorage.setItem("idStudent", document.getElementById('idStudent'+item.id).innerText);
-                sessionStorage.setItem("nameStudent", document.getElementById('nameStudent'+item.id).innerText);
+            document.getElementById("consult" + item.id_student).addEventListener("click", function () {
+                sessionStorage.setItem("idStudent", document.getElementById('idStudent'+item.id_student).innerText);
+                sessionStorage.setItem("nameStudent", document.getElementById('nameStudent'+item.id_student).innerText);
                 displayConsultStudent();
             });
-            document.getElementById("correct" + item.id).addEventListener("click", function (event) {
-                //let button = event.target;
-                sessionStorage.setItem("idStudent", document.getElementById('idStudent'+item.id).innerText);
-                sessionStorage.setItem("nameStudent", document.getElementById('nameStudent'+item.id).innerText);
+            document.getElementById("correct" + item.id_student).addEventListener("click", function () {
+                sessionStorage.setItem("idStudent", document.getElementById('idStudent'+item.id_student).innerText);
+                sessionStorage.setItem("nameStudent", document.getElementById('nameStudent'+item.id_student).innerText);
                 displayCorrectStudent();
             });
         }
@@ -73,21 +77,22 @@ function displayConsultStudent()
         '        </div>\n' +
         '        <button id="btnCorrect" class="btn btn-danger">Correct</button>\n' +
         '    </form>');
-    let urlImage = "http://10.0.1.49/"+sessionStorage.getItem('idExamination')+'/'+sessionStorage.getItem('idStudent')+".jpg";
+    let urlImage = "http://10.0.1.49/" + sessionStorage.getItem('idExamination') + '/' + sessionStorage.getItem('idStudent') + ".jpg";
     $('#center-div').html('    <img class="img-fluid img-thumbnail mx-auto d-block" style="width: 50%" src="'+urlImage+'" alt="img-examination">\n')
     document.getElementById('btnCorrect').onclick = function correctAStudent(event) {
         event.preventDefault();
         document.location.href="index.html#correctStudent";
-        displayCorrectStudent('');
-        ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/correction?student_id:'+ sessionStorage.getItem('idStudent') + '&login_teacher=' + sessionStorage.getItem('nameTeacher'), displayCorrectStudent);
+        //displayCorrectStudent('');
+        ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/correction?student_id:' + sessionStorage.getItem('idStudent') + '&login_teacher:' + sessionStorage.getItem('login_teacher'), displayCorrectStudent);
     }
-    sessionStorage.setItem('location', "consult");
 }
 
 function displayCorrectStudent(responses)
 {
-    //let data = JSON.parse(responses);
-    let data = [{"id":"1","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"2","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"3","1":"true","2":"false", "3":"false","4":"true", "e":"true"},];
+    responses = removeLastComma(responses);
+    console.log(responses);
+    let data = JSON.parse(responses);
+    //let data = [{"id":"1","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"2","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"3","1":"true","2":"false", "3":"false","4":"true", "e":"true"},];
     $('#page-top').html('    <h1 class="d-flex align-items-center justify-content-center h-100">Correct student</h1><br>\n' +
         '    <form class="form-inline d-flex justify-content-center h-100">\n' +
         '        <div class="form-group mr-2">\n' +
@@ -97,11 +102,10 @@ function displayCorrectStudent(responses)
         '<button onclick="signOut()" id="signout" type="submit" class="btn btn-danger">Sign out</button>' +
         '</div>'+
         '        <div class="form-group mr-2">\n' +
-        '            <div class="card-text">Student: '+ sessionStorage.getItem('nameStudent') +' - Promotion '+ sessionStorage.getItem('idPromotion') +' - Examination '+ sessionStorage.getItem('idExamination') +'</div>\n' +
+        '            <div class="card-text">Student: '+ student.getName() +' - Promotion '+ student.getIdPromotion() +' - Examination '+ student.setIdExamination() +'</div>\n' +
         '        </div>\n' +
         '    </form><br><br>');
-    let urlImage = "http://10.0.1.49/"+sessionStorage.getItem('idExamination')+'/'+sessionStorage.getItem('idStudent')+".jpg";
-    sessionStorage.setItem('location', "correct");
+    let urlImage = "http://10.0.1.49/" + sessionStorage.getItem('idExamination') + '/' + sessionStorage.getItem('idStudent') + ".jpg";
     let text =
         '<div class="row align-content-center">' +
             '<div class="col-md-6">' +
@@ -165,8 +169,7 @@ function updateTheCorrection(nbQuestions, nbResponses)
         jsonData["q"+i] = row;
     }
     console.log(jsonData);
-    ajaxRequest('PUT', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/student?student_id:'+ sessionStorage.getItem('idStudent') + '&login_teacher=' + sessionStorage.getItem('nameTeacher') + '&responses:'+jsonData, displayExaminations);
-
+    ajaxRequest('PUT', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/student?student_id:'+ student.getId() + '&login_teacher:' + teacher.getName() + '&responses:'+jsonData, displayExaminations);
 }
 
 function signOut() {

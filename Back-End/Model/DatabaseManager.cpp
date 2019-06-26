@@ -73,9 +73,10 @@ void DatabaseManager::fetchPromotions(string& jsonResponse){
 
     stringstream json;
     json << "[";
-    while (selectFields.fetch()) {
-        json << "{'id_promotion':'" << to_string(fields.get<int>(0)) << "', 'name':'" << fields.get<string>(1) << "'}, ";
+    do {
+        json << "{\"id_promotion\":\"" << to_string(fields.get<int>(0)) << "\", \"name\":\"" << fields.get<string>(1) << "\"}, ";
     }
+    while (selectFields.fetch());
     json << "]";
 
     jsonResponse = json.str();
@@ -91,9 +92,10 @@ void DatabaseManager::fetchExams(string& jsonResponse, const string& id_promotio
 
     stringstream json;
     json << "[";
-    while (selectFields.fetch()) {
-        json << "{'id_examination':'" << to_string(fields.get<int>(0)) << "', 'name':'" << fields.get<string>(1) << "'}, ";
+    do {
+        json << "{\"id_examination\":\"" << to_string(fields.get<int>(0)) << "\", \"name\":\"" << fields.get<string>(1) << "\"}, ";
     }
+    while (selectFields.fetch());
     json << "]";
 
     jsonResponse = json.str();
@@ -115,9 +117,10 @@ void DatabaseManager::fetchStudents(string& jsonResponse, const string& id_promo
 
     stringstream json;
     json << "[";
-    while (selectFields.fetch()) {
-        json << "{'id_student':'" << to_string(fields.get<int>(0)) << "', 'firstname':'" << fields.get<string>(1) << "', 'lastname':'" << fields.get<string>(2) << "'}, ";
+    do {
+        json << "{\"id_student\":\"" << to_string(fields.get<int>(0)) << "\", \"firstname\":\"" << fields.get<string>(1) << "\", \"lastname\":\"" << fields.get<string>(2) << "\"}, ";
     }
+    while (selectFields.fetch());
     json << "]";
 
     jsonResponse = json.str();
@@ -125,6 +128,57 @@ void DatabaseManager::fetchStudents(string& jsonResponse, const string& id_promo
     if(jsonResponse == "[]"){
         stringstream error;
         error << "Invalid id_promotion: '" << id_promotion << "'" << ". No entry associated to this parameter." << endl;
+        throw invalid_argument(error.str());
+    }
+}
+
+void DatabaseManager::insertResponses(const int &id_student, const std::vector<std::pair<int, int>> &answers)
+    {for(const auto& val : answers) {
+            soci::row fields;
+            soci::statement selectFields = (session->prepare
+                    << "INSERT INTO answer(id_student, id_question, value) VALUES (:id_student, :id_question, :value)",
+                    soci::use(id_student, "id_student"),
+                    soci::use(val.first, "id_question"),
+                    soci::use(val.second, "value"),
+                    soci::into(fields));
+            selectFields.execute(true);
+        }
+}
+
+void DatabaseManager::fetchResponses(string &jsonResponse, const string &id_examination, const string &id_student){
+
+    soci::row fields;
+    soci::statement selectFields = (session->prepare << "SELECT answer.id_question, value FROM answer JOIN question WHERE question.id_examination = :id_examination AND answer.id_student = :id_student",
+            soci::use(id_examination, "id_examination"),
+            soci::use(id_student, "id_student"),
+            soci::into(fields));
+    selectFields.execute(true);
+
+    int id_question = 0;
+    stringstream json;
+    json << "[";
+    do {
+
+        if (id_question == fields.get<int>(0))
+        {
+             json << "\"responses\":\"" << to_string(fields.get<int>(1));
+        }
+        else {
+            json << "{\"id_question\":\"" << to_string(id_question) << ",";
+
+            id_question = fields.get<int>(0);
+        }
+        json << "{\"id_examination\":\"" << to_string(fields.get<int>(0)) << "\", \"name\":\"" << fields.get<string>(1) << "\"}, ";
+    }
+    while (selectFields.fetch());
+    json << "]";
+
+    jsonResponse = json.str();
+
+    if(jsonResponse == "[]"){
+        stringstream error;
+        error << "Invalid id_examination: '" << id_examination << "' and id_student: '" << id_student <<
+              "'. No entry associated to those two parameters." << endl;
         throw invalid_argument(error.str());
     }
 }

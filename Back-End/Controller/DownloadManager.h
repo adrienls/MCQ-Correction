@@ -22,7 +22,7 @@ private:
 public:
     QNetworkAccessManager manager;
     DownloadManager();
-    void doDownload(const int &idPromotion, const int &idStudent);
+    void doDownload(const int &id_examination, const int &idStudent);
     virtual ~DownloadManager() = default;
 
 public slots:

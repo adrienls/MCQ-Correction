@@ -50,6 +50,8 @@ public:
     void fetchPromotions(string& jsonResponse);
     void fetchExams(string& jsonResponse, const string& id_promotion, const string& login_teacher);
     void fetchStudents(string& jsonResponse, const string& id_promotion);
+    void insertResponses(const int &id_student, const std::vector<std::pair<int, int>> &answers);
+    void fetchResponses(string &jsonResponse, const string &id_examination, const string &id_student);
 };
 
 #endif //MCQ_CORRECTION_DATABASEMANAGER_H

@@ -7,10 +7,10 @@
 #include "MainScan.h"
 #include "../DownloadManager.h"
 
-void MainScan(int argc, char** argv, int id_promotion, int id_student, vector<pair <int,int>> &answers, QString &stringImage){
+void MainScan(int argc, char** argv, int id_examination, int id_student, vector<pair <int,int>> &answers, QString &stringImage){
     QCoreApplication downloadApp(argc, argv);
     DownloadManager manager;
-    manager.doDownload(id_promotion, id_student); // téléchargement de l'image
+    manager.doDownload(id_examination, id_student); // téléchargement de l'image
     downloadApp.exec();
 
     QImage image("student_answer.jpg");

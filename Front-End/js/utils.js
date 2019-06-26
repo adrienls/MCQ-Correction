@@ -20,7 +20,8 @@ function searchTable()
     }
 }
 
-function signout() {
+function signout()
+{
     Cookies.remove('token');
     sessionStorage.clear();
     document.location.href="index.html";
