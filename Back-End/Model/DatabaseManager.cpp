@@ -218,7 +218,6 @@ void DatabaseManager::fetchResponses(string &jsonResponse, const string &id_exam
         unsigned int i = 0;
         for(auto value : fields){
             value.second = data.get<string>(i);
-            //TODO forcer l'enregistement des données en string
             i++;
         }
     }
