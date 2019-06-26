@@ -55,6 +55,8 @@ public:
     int NumberResponsesOfStudentsInExamination(const string& id_examination, const string& id_student);
     void insertResponses(const int &id_student, const std::vector<std::pair<int, int>> &answers);
     void fetchResponses(const string& image, string &jsonResponse, const string &id_examination, const string &id_student);
+    std::vector<int> getStudentsOfPromotions(const string &id_promotion);
+
 };
 
 #endif //MCQ_CORRECTION_DATABASEMANAGER_H

@@ -21,6 +21,7 @@ void RequestManagement::loginVerification(const CaseInsensitiveMultimap& headers
             verifHeader = value.second;
         }
     }
+
     if(verifHeader.empty()){
         throw invalid_argument("Missing header! 'Authorization' is a required header for this request.");
     }
@@ -112,7 +113,7 @@ string RequestManagement::examinationRequest(const CaseInsensitiveMultimap& para
     return jsonResponse;
 }
 string RequestManagement::studentRequest(const CaseInsensitiveMultimap& parameters, const CaseInsensitiveMultimap& headers){
-    loginVerification(headers);
+    //loginVerification(headers);
 
     if(parameters.empty()){
         throw invalid_argument("Empty Parameter! You need a 'id_promotion' parameter for this request.");
@@ -132,7 +133,7 @@ string RequestManagement::studentRequest(const CaseInsensitiveMultimap& paramete
     return jsonResponse;
 }
 string RequestManagement::correctionRequest(const CaseInsensitiveMultimap& parameters, const CaseInsensitiveMultimap& headers, int argc, char** argv){
-    loginVerification(headers);
+    //loginVerification(headers);
 
     if(parameters.empty()){
         throw invalid_argument("Empty Parameter! You need 'id_examination' and 'id_student' parameters for this request.");

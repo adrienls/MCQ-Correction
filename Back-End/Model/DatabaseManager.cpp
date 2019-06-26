@@ -128,6 +128,11 @@ void DatabaseManager::fetchStudents(string& jsonResponse, const string& id_promo
 
     stringstream json;
     json << "[";
+    if(fields.get<int>(0) == 0){
+        stringstream error;
+        error << "Invalid id_promotion: '" << id_promotion << "'" << ". No entry associated to this parameter." << endl;
+        throw invalid_argument(error.str());
+    }
     do {
         json << "{\"id_student\":\"" << to_string(fields.get<int>(0)) << "\", \"firstname\":\"" << fields.get<string>(1) << "\", \"lastname\":\"" << fields.get<string>(2) << "\"}, ";
     }
@@ -135,12 +140,13 @@ void DatabaseManager::fetchStudents(string& jsonResponse, const string& id_promo
     json << "]";
 
     jsonResponse = json.str();
-
+/*
     if(jsonResponse == "[]"){
         stringstream error;
         error << "Invalid id_promotion: '" << id_promotion << "'" << ". No entry associated to this parameter." << endl;
         throw invalid_argument(error.str());
     }
+    */
 }
 
 int DatabaseManager::NumberResponsesOfStudentsInExamination(const string& id_examination, const string& id_student)
@@ -190,16 +196,11 @@ void DatabaseManager::fetchResponses(const string&imageB64, string &jsonResponse
         if (id_question == fields.get<int>(0))
         {
             answers[fields.get<int>(1)-1] = true;
-            /*if (answer != fields.get<int>(1){
-                json << ",\"responses\":\"" << t-o_string(fields.get<int>(1)) << "\"";//<< "\",";
-                answer = fields.get<int>(1);
-            }*/
         }
         else {
-            //inserer answers
             if (a==1){
                 for (int i = 0; i < nbresponses; i++){
-                    json << ",\"" << i+1 << "\":\"" << answers[i] << "\"";//<< "\",";
+                    json << ",\"" << to_string(i+1) << "\":\"" << answers[i] << "\"";
                     answers[i] = false;
                 }
                 a=0;
@@ -213,22 +214,20 @@ void DatabaseManager::fetchResponses(const string&imageB64, string &jsonResponse
             id_question = fields.get<int>(0);
             if (id_question != b+1){
                 std::cout << id_question << " : " << b << std::endl;
-                json << "{\"id_question\":\"" << b+1 << "\",";
+                json << "{\"id_question\":\"" << b+1 << "\"";
                 for (int i = 0; i < nbresponses; i++){
-                    json << ",\"" << i+1 << "\":\"" << 0 << "\"";//<< "\",";
+                    json << ",\"" << to_string(i+1)  << "\":\"" << 0 << "\"";
                 }
                 b++;
             }
-            json << "{\"id_question\":\"" << to_string(id_question) << "\",";
+            json << "{\"id_question\":\"" << to_string(id_question) << "\"";
             a=1;
             b++;
-            //json << "\"responses\":\"" << to_string(fields.get<int>(1)) << "\"";
-            //answer = 0;
         }
     }
     while (selectFields.fetch());
     for (int i = 0; i < nbresponses; i++){
-        json << ",\"" << i+1 << "\":\"" << answers[i] << "\"";//<< "\",";
+        json << ",\"" << to_string(i+1) << "\":\"" << answers[i] << "\"";
         answers[i] = false;
     }
     json << "}]";
@@ -241,6 +240,21 @@ void DatabaseManager::fetchResponses(const string&imageB64, string &jsonResponse
               "'. No entry associated to those two parameters." << endl;
         throw invalid_argument(error.str());
     }
+}
+
+vector<int> DatabaseManager::getStudentsOfPromotions(const string &id_promotion) {
+    soci::row studentsROW;
+    soci::statement selectFields = (session->prepare << "SELECT id_student FROM student WHERE id_promotion = :id_promotion ",
+            soci::use(id_promotion, "id_promotion"),
+            soci::into(studentsROW));
+    selectFields.execute(true);
+
+    vector<int> students;
+    do {
+        students.push_back(studentsROW.get<int>(0));
+    }
+    while (selectFields.fetch());
+    return students;
 }
 
 /*void DatabaseManager::fetchData(const map<string, string>& fields, const string& table, const map<string, string>& where){

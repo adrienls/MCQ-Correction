@@ -70,14 +70,14 @@ function displayConsultStudent()
         '            <a class="btn btn-primary" href="index.html">Go home </a>\n' +
         '        </div>\n' +
         '<div class="form-group mr-2">\n' +
-    '            <button onclick="signOut()" id="signout" type="submit" class="btn btn-danger">Sign out</button>\n' +
-    '        </div>\n' +
+        '            <button onclick="signOut()" id="signout" type="submit" class="btn btn-danger">Sign out</button>\n' +
+        '        </div>\n' +
         '        <div id="studentInformations" class="form-group mr-2">\n' +
         '            <div class="card-text">Student: '+ sessionStorage.getItem('nameStudent') +' - Promotion '+ sessionStorage.getItem('idPromotion') +' - Examination '+ sessionStorage.getItem('idExamination') +'</div>\n' +
         '        </div>\n' +
         '        <button id="btnCorrect" class="btn btn-danger">Correct</button>\n' +
         '    </form>');
-    let urlImage = "http://10.0.1.19/" + sessionStorage.getItem('idExamination') + '/' + sessionStorage.getItem('idStudent') + ".jpg";
+    let urlImage = "http://" + ajax.getServerImages() +"/" + sessionStorage.getItem('idExamination') + '/' + sessionStorage.getItem('idStudent') + ".jpg";
     $('#center-div').html('    <img class="img-fluid img-thumbnail mx-auto d-block" style="width: 50%" src="'+urlImage+'" alt="img-examination">\n')
     document.getElementById('btnCorrect').onclick = function correctAStudent(event) {
         event.preventDefault();
@@ -89,10 +89,8 @@ function displayConsultStudent()
 
 function displayCorrectStudent(responses)
 {
-    console.log("responses: " + responses);
-    responses = removeLastComma(responses);
+    console.log(responses);
     let data = JSON.parse(responses);
-    //let data = [{"id":"1","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"2","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"3","1":"true","2":"false", "3":"false","4":"true", "e":"true"},];
     $('#page-top').html('    <h1 class="d-flex align-items-center justify-content-center h-100">Correct student</h1><br>\n' +
         '    <form class="form-inline d-flex justify-content-center h-100">\n' +
         '        <div class="form-group mr-2">\n' +
@@ -105,33 +103,36 @@ function displayCorrectStudent(responses)
         '            <div class="card-text">Student: '+ student.getName() +' - Promotion '+ student.getIdPromotion() +' - Examination '+ student.setIdExamination() +'</div>\n' +
         '        </div>\n' +
         '    </form><br><br>');
-    let urlImage = "http://10.0.1.19/" + sessionStorage.getItem('idExamination') + '/' + sessionStorage.getItem('idStudent') + ".jpg";
     let text =
         '<div class="row align-content-center">' +
-            '<div class="col-md-6">' +
-                '<p>Unedited questionnaire returned by the student</p>' +
-            '</div>' +
-            '<div class="col-md-6">' +
-                '<p>Answers saved in the database</p>' +
-            '</div>' +
+        '<div class="col-md-6">' +
+        '<p>Unedited questionnaire returned by the student</p>' +
+        '</div>' +
+        '<div class="col-md-6">' +
+        '<p>Answers saved in the database</p>' +
+        '</div>' +
         '</div>' +
         '<div class="row align-content-center">' +
-            '<div class="col-md-6">' +
-                '<img id="img" class="img-fluid img-thumbnail mx-auto d-block" style="width: 100%" src="data:image/png;base64, '+ data[0].image + '" alt="img-examination">' +
-            '</div>\n' +
+        '<div class="col-md-6">' +
+        '<img id="img" class="img-fluid img-thumbnail mx-auto d-block" style="width: 100%" src="data:image/png;base64, '+ data[0].image + '" alt="img-examination">' +
+        '</div>\n' +
         '<div class="col-md-6">\n' +
         '<form>\n'+'<div id="checkboxes" class="form-row">\n';
     let nbResponses = 0;
-    for(let key in data[0])
-        if(data[0].hasOwnProperty(key))
+    for(let key in data[1]) {
+        if(data[1].hasOwnProperty(key))
+        {
             nbResponses++;
-    for (let item of data)
+        }
+    }
+    let nbElement = Object.keys(data).length -1 ;
+    for (let i = 1; i<= nbElement; i++)
     {
-        text += '<div class="form-group col-md-2">Q'+item.id+': </div>\n';
-        for(let i = 1; i < nbResponses; i++)
+        text += '<div class="form-group col-md-2">Q'+data[i].id_question+': </div>\n';
+        for(let j = 1; j < nbResponses; j++)
         {
             text += '<div class="form-group col-md-2">\n';
-            if (item[i] === "true")  {
+            if (data[i][j] === "1")  {
                 text += '<input id="checkbox'+i+'" class="form-check-input" type="checkbox" name="response" checked>';
             }
             else {
@@ -140,8 +141,9 @@ function displayCorrectStudent(responses)
             text += '<label class="form-check-label">R'+ i +'</label>\n' + '</div>\n';
         }
     }
-        text +=
-            '</div>' +
+
+    text +=
+        '</div>' +
         '<button type="submit" id="saveCorrection" class="btn btn-primary">Save the correction</button>\n' +
         '</form>\n' +
         '</div>\n' +
@@ -156,7 +158,7 @@ function displayCorrectStudent(responses)
 
 function updateTheCorrection(nbQuestions, nbResponses)
 {
-    let jsonData = [{"idExamination":sessionStorage.getItem('idExamination'), "idStudent":sessionStorage.getItem('idStudent'), "idPromotition":sessionStorage.getItem('idPromotion')},];
+    let jsonData = [{"idExamination":sessionStorage.getItem('idExamination'), "idStudent":sessionStorage.getItem('idStudent'), "idPromotion":sessionStorage.getItem('idPromotion')},];
     let tab = [];
     $("input:checkbox[name=response]").each(function()
     {
@@ -165,15 +167,25 @@ function updateTheCorrection(nbQuestions, nbResponses)
     for (let i = 1; i <= nbQuestions; i++)
     {
         let row = [];
-        i === 1 ? row = tab.splice(0,i+nbResponses-1) : row =tab.splice(0,i+nbResponses-2);
+        //i === 1 ? row = tab.splice(0,i+nbResponses-1) :
+        row =tab.splice(0,i+nbResponses-i);
         jsonData["q"+i] = row;
     }
     console.log(jsonData);
-    ajaxRequest('PUT', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/student?student_id='+ student.getId() + '&login_teacher=' + teacher.getName() + '&responses='+jsonData, displayExaminations);
+    ajaxRequest('PUT', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/sendCorrection?student_id='+ sessionStorage.getItem('idStudent') + '&responses='+jsonData, a);
 }
 
 function signOut() {
     Cookies.remove('token');
     sessionStorage.clear();
     document.location.href = "index.html";
+}
+
+function a() {
+    window.alert("the promotion has been corrected!");
+}
+
+function b() {
+    window.alert("the student has been corrected!");
+    displayStudentsTable();
 }
