@@ -27,7 +27,7 @@ We had to design and implement a web application that can:
 * Access to data must be secure
 
 #### Use
-The server is automatically called by client and requests are made by the different interaction with the web interface.
+The server is automatically called by the client and requests are made by the different interaction with the web interface.
 
 You can modify the configuration of the server by modifying the server.cfg file.
 You can modify the adress and how to connect to the database.
@@ -36,7 +36,7 @@ Furthermore, the IP of the image server (where the examination scans are stored)
 Moreover, you can select in which corner is the black square (which plays an important role in the algorithm process).
 In the default configuration the black square is located in the top left corner.
 
-**Default configuration**
+**Default configuration file**
 ```
 #----------------------------
 # Server Configuration File
@@ -45,15 +45,15 @@ In the default configuration the black square is located in the top left corner.
 
 database:
 {
-    ip = "localhost";
-    db = "MCQ";
-    user = "testUser";
-    password = "testPassword";
+    ip = "";
+    db = "";
+    user = "";
+    password = "";
 };
 
 images:
 {
-    ip = "10.0.1.49";
+    ip = "";
 };
 
 scan:
