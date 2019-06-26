@@ -20,7 +20,7 @@ We had to design and implement a web application that can:
 ## Server
 
 #### Mandatory features
-* Data storage: entities and minimum information
+* Data storage - entities and minimum information:
   * Students: name, first name, promotion
   * Examinations: title, date, promotion, questions, correct answers, rating by question
   * Student responses to each question, associated rating

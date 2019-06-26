@@ -1,9 +1,7 @@
-//
-// Created by qsvtr on 6/24/19.
-//
 
 #include "DownloadManager.h"
 #include <QCoreApplication>
+
 using std::invalid_argument;
 
 DownloadManager::DownloadManager()

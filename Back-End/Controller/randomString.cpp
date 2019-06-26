@@ -1,14 +1,14 @@
 
 #include <random>
 #include <sstream>
-#include "token.h"
+#include "randomString.h"
 
 using std::random_device;
 using std::mt19937_64;
 using std::uniform_int_distribution;
 using std::stringstream;
 
-string random_string(unsigned int size){
+string randomString(unsigned int size){
 
     //contains all valid base64 characters
     const string BASE64("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");

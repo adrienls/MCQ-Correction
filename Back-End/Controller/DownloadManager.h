@@ -1,6 +1,3 @@
-//
-// Created by qsvtr on 6/24/19.
-//
 
 #ifndef QTDOWNLOADER2_DOWNLOADMANAGER_H
 #define QTDOWNLOADER2_DOWNLOADMANAGER_H
@@ -14,10 +11,12 @@
 #include <QUrl>
 #include <libconfig.h++>
 
+using std::string;
+
 class DownloadManager: public QObject {
     Q_OBJECT
 private:
-    std::string ip_server;
+    string ip_server;
 
 public:
     QNetworkAccessManager manager;
@@ -28,6 +27,5 @@ public:
 public slots:
     void downloadFinished(QNetworkReply *reply);
 };
-
 
 #endif //QTDOWNLOADER2_DOWNLOADMANAGER_H

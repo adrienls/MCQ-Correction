@@ -5,7 +5,6 @@
 #include "../Simple-Web-Server/server_https.hpp"
 
 using SimpleWeb::CaseInsensitiveMultimap;
-using std::to_string;
 
 CaseInsensitiveMultimap defaultHeaders(){
     CaseInsensitiveMultimap header;

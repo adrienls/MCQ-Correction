@@ -8,6 +8,6 @@
 
 using std::string;
 
-string random_string(unsigned int size);
+string randomString(unsigned int size);
 
 #endif //MCQ_CORRECTION_TOKEN_H
