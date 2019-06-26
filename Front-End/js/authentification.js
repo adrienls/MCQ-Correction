@@ -49,7 +49,7 @@ function displayStudentsTable(response)
         '                    <div class="form-group row justify-content-center">\n' +
         '                        <div class="col-lg-6">\n' +
         '                            <input type="text" class="form-control text-center" id="searchInput" onkeyup="searchTable()" placeholder="Search for names...">\n' +
-        '<div class="form-group mr-2"><button id="correctPromotion" type="submit" class="btn text-primary">Correct Promotion</button></div>' +
+        '<div class="form-group mr-2"><button id="correctPromotion" type="submit" class="btn btn btn-primary">Correct Promotion</button></div>' +
         '                        </div>\n' +
         '                    </div>\n' +
         '                </form>\n' +

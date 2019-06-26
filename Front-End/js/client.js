@@ -53,7 +53,7 @@ function displayStudents(students)
             document.getElementById("correct" + item.id_student).addEventListener("click", function () {
                 sessionStorage.setItem("idStudent", document.getElementById('idStudent'+item.id_student).innerText);
                 sessionStorage.setItem("nameStudent", document.getElementById('nameStudent'+item.id_student).innerText);
-                displayCorrectStudent();
+                ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/correction?id_examination:' + sessionStorage.getItem('idExamination') + '&id_student:' + sessionStorage.getItem('idStudent'), displayCorrectStudent);
             });
         }
     }
@@ -82,7 +82,6 @@ function displayConsultStudent()
     document.getElementById('btnCorrect').onclick = function correctAStudent(event) {
         event.preventDefault();
         document.location.href="index.html#correctStudent";
-        //displayCorrectStudent('');
         ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/correction?id_examination:' + sessionStorage.getItem('idExamination') + '&id_student:' + sessionStorage.getItem('idStudent'), displayCorrectStudent);
     }
 }
@@ -100,7 +99,7 @@ function displayCorrectStudent(responses)
         '<button onclick="signOut()" id="signout" type="submit" class="btn btn-danger">Sign out</button>' +
         '</div>'+
         '        <div class="form-group mr-2">\n' +
-        '            <div class="card-text">Student: '+ student.getName() +' - Promotion '+ student.getIdPromotion() +' - Examination '+ student.setIdExamination() +'</div>\n' +
+        '            <div class="card-text">Student: '+ sessionStorage.getItem('nameStudent') +' - Promotion '+ sessionStorage.getItem('idPromotion') +' - Examination '+ sessionStorage.getItem('idExamination') +'</div>\n' +
         '        </div>\n' +
         '    </form><br><br>');
     let text =
