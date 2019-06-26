@@ -169,7 +169,7 @@ function updateTheCorrection(nbQuestions, nbResponses)
         jsonData["q"+i] = row;
     }
     console.log(jsonData);
-    ajaxRequest('PUT', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/student?student_id:'+ student.getId() + '&login_teacher:' + teacher.getName() + '&responses:'+jsonData, displayExaminations);
+    ajaxRequest('PUT', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/student?student_id='+ student.getId() + '&login_teacher=' + teacher.getName() + '&responses='+jsonData, displayExaminations);
 }
 
 function signOut() {

@@ -1,8 +1,8 @@
-let ajax = new Ajax('localhost', '8080');
+let ajax = new Ajax('10.16.1.38', '8080'); //10.16.1.38
 let teacher = new Teacher();
 let student = new Student();
 
-ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/login?login:' + sessionStorage.getItem('login_teacher'), displayStudentsTable);
+ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/token?login=' + sessionStorage.getItem('login_teacher'), displayStudentsTable);
 
 document.getElementById('authentication-send').onclick = validateLogin;
 function validateLogin(event)
@@ -11,15 +11,17 @@ function validateLogin(event)
     let login = document.getElementById('inputLogin').value;
     let password = document.getElementById('inputPassword').value;
     sessionStorage.setItem('login_teacher', login);
-    ajaxLogin('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/authenticate?login:'+btoa(login)+'&password:'+btoa(password), setTokenCookie, login, password);
+    //ajaxLogin('GET', 'php/request.php/authenticate/', setTokenCookie, login, password);
+    ajaxLogin('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/authenticate', setTokenCookie, login, password);
 }
 
-function ajaxLogin(type, request, callback)
+function ajaxLogin(type, request, callback, login, password, data=null)
 {
     let xhr;
     xhr = new XMLHttpRequest();
     xhr.open(type, request, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.setRequestHeader('Authorization','Basic ' + btoa(login +':'+ password));
     xhr.onload = function ()
     {
         switch (xhr.status)
@@ -27,13 +29,14 @@ function ajaxLogin(type, request, callback)
             case 200:
             case 201:
                 callback(xhr.responseText);
-                ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/login?login:' + sessionStorage.getItem('login_teacher'), displayStudentsTable);
+                //ajaxRequest('GET', 'php/request.php/authenticate', displayStudentsTable);
+                ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/token?login=' + sessionStorage.getItem('login_teacher'), displayStudentsTable);
                 break;
             default:
                 httpErrors(xhr.status);
         }
     };
-    xhr.send();
+    xhr.send(data);
 }
 
 function setTokenCookie(token)
@@ -65,7 +68,7 @@ function displayStudentsTable(response)
         '    </div>');
 
     ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/promotion', displayPromotions);
-    ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/examination?id_promotion:1&login_teacher:' + sessionStorage.getItem('login_teacher'), displayExaminations);
+    ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/examination?id_promotion=1&login_teacher=' + sessionStorage.getItem('login_teacher'), displayExaminations);
 
     document.getElementById("top-form").addEventListener("click", function(event)
     {
@@ -75,6 +78,6 @@ function displayStudentsTable(response)
         sessionStorage.setItem("idPromotion", promotion.id);
         sessionStorage.setItem("idExamination", examination.id);
         $('#studentsTHead').html('<tr><th colspan="4">Students for the promotion '+ promotion.value +' and the ' + examination.value + '</th></tr>');
-        ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/student?id_promotion:' + sessionStorage.getItem('idPromotion'), displayStudents);
+        ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/student?id_promotion=' + sessionStorage.getItem('idPromotion'), displayStudents);
     });
 }
