@@ -333,11 +333,13 @@ int Scanner::getStartY() const {
     return startY;
 }
 
-void Scanner::getImageToString(QString &stringImage){
-    QByteArray ba;
-    QBuffer buffer(&ba);
+void Scanner::getImageToString(std::string &stringImage){
+    QBuffer buffer;
     buffer.open(QIODevice::WriteOnly);
-    image.save(&buffer, "BMP");
-    QByteArray arr = qCompress(buffer.buffer(),5);
-    stringImage = QString(arr);
+    image.save(&buffer, "JPG");
+    QByteArray const encoded = buffer.data().toBase64();
+    stringImage = encoded.toStdString();
+
+    //QByteArray arr = qCompress(buffer.buffer(),5);
+    //stringImage = QString(arr);
 }

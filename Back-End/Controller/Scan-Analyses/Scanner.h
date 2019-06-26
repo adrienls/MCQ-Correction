@@ -58,7 +58,7 @@ public:
     // Renvoie les réponse de l'éleve détectées et dessine une cercle autour de celle-ci.
     // Enregistre ensuite l'image modifée.
 
-    void getImageToString(QString &stringImage);
+    void getImageToString(std::string &stringImage);
     QImage getImage() { return this->image; };
 };
 

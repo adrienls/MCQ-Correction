@@ -5,6 +5,7 @@
 #include <soci.h>
 #include <soci-mysql.h>
 #include <string>
+#include <QtCore/QByteArray>
 
 using std::string;
 
@@ -50,8 +51,9 @@ public:
     void fetchPromotions(string& jsonResponse);
     void fetchExams(string& jsonResponse, const string& id_promotion, const string& login_teacher);
     void fetchStudents(string& jsonResponse, const string& id_promotion);
+    int NumberResponsesOfStudentsInExamination(const string& id_examination, const string& id_student);
     void insertResponses(const int &id_student, const std::vector<std::pair<int, int>> &answers);
-    void fetchResponses(string &jsonResponse, const string &id_examination, const string &id_student);
+    void fetchResponses(const string& image, string &jsonResponse, const string &id_examination, const string &id_student);
 };
 
 #endif //MCQ_CORRECTION_DATABASEMANAGER_H

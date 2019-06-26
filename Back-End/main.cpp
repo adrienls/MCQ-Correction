@@ -178,32 +178,32 @@ int main(int argc, char** argv) {
 
             SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
             if(parameters.empty()){
-                throw invalid_argument("Empty Parameter! You need 'id_promotion' and 'id_student' parameters for this request.");
+                throw invalid_argument("Empty Parameter! You need 'id_examination' and 'id_student' parameters for this request.");
             }
             string id_examination, id_student;
             for(const auto& value : parameters){
-                if(value.first == "id_promotion"){
+                if(value.first == "id_examination"){
                     id_examination = value.second;
                 }
                 else if(value.first == "id_student"){
                     id_student = value.second;
                 }
                 else{
-                    throw invalid_argument("Wrong Parameter! 'id_promotion' and 'id_student' are the only valid parameters for this request.");
+                    throw invalid_argument("Wrong Parameter! 'id_examination' and 'id_student' are the only valid parameters for this request.");
                 }
             }
 
             //launch Scan-Analyses
             vector<pair <int,int>> answers;
-            QString stringImage;
+            string stringImage;
             MainScan(argc, argv , stoi(id_examination), stoi(id_student), answers, stringImage);
-            //std::cerr << stringImage.toStdString() << std::endl;
-            //for(const auto& val : answers){ std::cerr << "Question :" << val.first << " ------ Response : " << val.second << std::endl; }
 
             //insert in database
-            db.insertResponses(stoi(id_student), answers);
+            if (db.NumberResponsesOfStudentsInExamination(id_examination, id_student) == 0){
+                db.insertResponses(stoi(id_student), answers);
+            }
             //return json
-            db.fetchResponses(jsonResponse, id_examination, id_student);
+            db.fetchResponses(stringImage, jsonResponse, id_examination, id_student);
             response->write(StatusCode::success_ok, jsonResponse, defaultHeaders());
         }
         catch(const exception &e){

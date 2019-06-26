@@ -1,7 +1,9 @@
 #include <libconfig.h++>
 #include <iostream>
 #include "DatabaseManager.h"
+#include <vector>
 
+using std::vector;
 using std::stringstream;
 using std::exception;
 using std::invalid_argument;
@@ -132,6 +134,17 @@ void DatabaseManager::fetchStudents(string& jsonResponse, const string& id_promo
     }
 }
 
+int DatabaseManager::NumberResponsesOfStudentsInExamination(const string& id_examination, const string& id_student)
+{
+    int count;
+    soci::statement selectFields = (session->prepare << "SELECT COUNT(id_answer) FROM answer JOIN question ON question.id_question = answer.id_question WHERE id_examination = :id_examination AND id_student = :id_student",
+            soci::use(id_examination, "id_examination"),
+            soci::use(id_student, "id_student"),
+            soci::into(count));
+    selectFields.execute(true);
+    return count;
+}
+
 void DatabaseManager::insertResponses(const int &id_student, const std::vector<std::pair<int, int>> &answers)
     {for(const auto& val : answers) {
             soci::row fields;
@@ -145,33 +158,71 @@ void DatabaseManager::insertResponses(const int &id_student, const std::vector<s
         }
 }
 
-void DatabaseManager::fetchResponses(string &jsonResponse, const string &id_examination, const string &id_student){
+void DatabaseManager::fetchResponses(const string&imageB64, string &jsonResponse, const string &id_examination, const string &id_student){
 
     soci::row fields;
-    soci::statement selectFields = (session->prepare << "SELECT answer.id_question, value FROM answer JOIN question WHERE question.id_examination = :id_examination AND answer.id_student = :id_student",
+    soci::statement selectFields = (session->prepare << "SELECT answer.id_question, value FROM answer JOIN question ON question.id_question = answer.id_question WHERE question.id_examination = :id_examination AND answer.id_student = :id_student",
             soci::use(id_examination, "id_examination"),
             soci::use(id_student, "id_student"),
             soci::into(fields));
     selectFields.execute(true);
 
-    int id_question = 0;
+    int id_question = 0, answer = 0, nbresponses = 5;
+    vector<bool> answers;
+    for (int i = 0; i < nbresponses; i++)
+    {
+        answers.push_back(false);
+    }
     stringstream json;
-    json << "[";
+    int a=0;
+    int b=0;
+    json << "[{\"image\": \"" << imageB64 << + "\"},";
     do {
-
         if (id_question == fields.get<int>(0))
         {
-             json << "\"responses\":\"" << to_string(fields.get<int>(1));
+            answers[fields.get<int>(1)-1] = true;
+            /*if (answer != fields.get<int>(1){
+                json << ",\"responses\":\"" << t-o_string(fields.get<int>(1)) << "\"";//<< "\",";
+                answer = fields.get<int>(1);
+            }*/
         }
         else {
-            json << "{\"id_question\":\"" << to_string(id_question) << ",";
-
+            //inserer answers
+            if (a==1){
+                for (int i = 0; i < nbresponses; i++){
+                    json << ",\"" << i+1 << "\":\"" << answers[i] << "\"";//<< "\",";
+                    answers[i] = false;
+                }
+                a=0;
+            }
+            if (id_question != 0) {
+                json << "},";
+            }
+            if (a == 0){
+                answers[fields.get<int>(1)-1] = true;
+            }
             id_question = fields.get<int>(0);
+            if (id_question != b+1){
+                std::cout << id_question << " : " << b << std::endl;
+                json << "{\"id_question\":\"" << b+1 << "\",";
+                for (int i = 0; i < nbresponses; i++){
+                    json << ",\"" << i+1 << "\":\"" << 0 << "\"";//<< "\",";
+                }
+                b++;
+            }
+            json << "{\"id_question\":\"" << to_string(id_question) << "\",";
+            a=1;
+            b++;
+            //json << "\"responses\":\"" << to_string(fields.get<int>(1)) << "\"";
+            //answer = 0;
         }
-        json << "{\"id_examination\":\"" << to_string(fields.get<int>(0)) << "\", \"name\":\"" << fields.get<string>(1) << "\"}, ";
     }
     while (selectFields.fetch());
-    json << "]";
+    for (int i = 0; i < nbresponses; i++){
+        json << ",\"" << i+1 << "\":\"" << answers[i] << "\"";//<< "\",";
+        answers[i] = false;
+    }
+    json << "}]";
 
     jsonResponse = json.str();
 

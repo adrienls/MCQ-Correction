@@ -77,20 +77,20 @@ function displayConsultStudent()
         '        </div>\n' +
         '        <button id="btnCorrect" class="btn btn-danger">Correct</button>\n' +
         '    </form>');
-    let urlImage = "http://10.0.1.49/" + sessionStorage.getItem('idExamination') + '/' + sessionStorage.getItem('idStudent') + ".jpg";
+    let urlImage = "http://10.0.1.19/" + sessionStorage.getItem('idExamination') + '/' + sessionStorage.getItem('idStudent') + ".jpg";
     $('#center-div').html('    <img class="img-fluid img-thumbnail mx-auto d-block" style="width: 50%" src="'+urlImage+'" alt="img-examination">\n')
     document.getElementById('btnCorrect').onclick = function correctAStudent(event) {
         event.preventDefault();
         document.location.href="index.html#correctStudent";
         //displayCorrectStudent('');
-        ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/correction?student_id:' + sessionStorage.getItem('idStudent') + '&login_teacher:' + sessionStorage.getItem('login_teacher'), displayCorrectStudent);
+        ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/correction?id_examination:' + sessionStorage.getItem('idExamination') + '&id_student:' + sessionStorage.getItem('idStudent'), displayCorrectStudent);
     }
 }
 
 function displayCorrectStudent(responses)
 {
+    console.log("responses: " + responses);
     responses = removeLastComma(responses);
-    console.log(responses);
     let data = JSON.parse(responses);
     //let data = [{"id":"1","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"2","1":"true","2":"false", "3":"false","4":"true", "5":"true"},{"id":"3","1":"true","2":"false", "3":"false","4":"true", "e":"true"},];
     $('#page-top').html('    <h1 class="d-flex align-items-center justify-content-center h-100">Correct student</h1><br>\n' +
@@ -105,7 +105,7 @@ function displayCorrectStudent(responses)
         '            <div class="card-text">Student: '+ student.getName() +' - Promotion '+ student.getIdPromotion() +' - Examination '+ student.setIdExamination() +'</div>\n' +
         '        </div>\n' +
         '    </form><br><br>');
-    let urlImage = "http://10.0.1.49/" + sessionStorage.getItem('idExamination') + '/' + sessionStorage.getItem('idStudent') + ".jpg";
+    let urlImage = "http://10.0.1.19/" + sessionStorage.getItem('idExamination') + '/' + sessionStorage.getItem('idStudent') + ".jpg";
     let text =
         '<div class="row align-content-center">' +
             '<div class="col-md-6">' +
@@ -117,7 +117,7 @@ function displayCorrectStudent(responses)
         '</div>' +
         '<div class="row align-content-center">' +
             '<div class="col-md-6">' +
-                '<img id="img" class="img-fluid img-thumbnail mx-auto d-block" style="width: 100%" src="'+urlImage+'" alt="img-examination">' +
+                '<img id="img" class="img-fluid img-thumbnail mx-auto d-block" style="width: 100%" src="data:image/png;base64, '+ data[0].image + '" alt="img-examination">' +
             '</div>\n' +
         '<div class="col-md-6">\n' +
         '<form>\n'+'<div id="checkboxes" class="form-row">\n';
