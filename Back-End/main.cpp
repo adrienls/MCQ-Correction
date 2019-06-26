@@ -1,5 +1,3 @@
-#include <QImage>
-
 #include "Simple-Web-Server/client_https.hpp"
 #include "Simple-Web-Server/server_https.hpp"
 
@@ -11,6 +9,8 @@
 #include "Controller/Scan-Analyses/MainScan.h"
 #include "Controller/DownloadManager.h"
 #include "Controller/token.h"
+#include "Controller/loginVerification.h"
+#include "Controller/splitString.h"
 
 using std::shared_ptr;
 using std::invalid_argument;
@@ -19,6 +19,7 @@ using std::thread;
 using std::stringstream;
 using std::endl;
 
+using SimpleWeb::CaseInsensitiveMultimap;
 using SimpleWeb::StatusCode;
 
 using HttpsServer = SimpleWeb::Server<SimpleWeb::HTTPS>;
@@ -32,13 +33,13 @@ int main(int argc, char** argv) {
     HttpsServer server("server.crt", "server.key");
     server.config.port = 8080;
 
-    server.resource["^/login$"]["GET"] = [](shared_ptr<HttpsServer::Response> response,
+    server.resource["^/token"]["GET"] = [](shared_ptr<HttpsServer::Response> response,
                                                 shared_ptr<HttpsServer::Request> request) {
         try{
             DatabaseManager db;
             string token;
 
-            SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            CaseInsensitiveMultimap parameters = request->parse_query_string();
             if(parameters.empty()){
                 throw invalid_argument("Empty Parameter! You need a 'login' parameter for this request.");
             }
@@ -64,25 +65,28 @@ int main(int argc, char** argv) {
         try{
             DatabaseManager db;
 
-            SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
-            if(parameters.empty()){
-                throw invalid_argument("Empty Parameter! You need 'login' and 'password' parameters for this request.");
+            CaseInsensitiveMultimap headers = request->header;
+
+            if(headers.empty()){
+                throw invalid_argument("Empty header! 'Authorize Bearer' is a required header for this request.");
             }
-            string login, password;
-            for(const auto& value : parameters){
-                if(value.first == "login"){
-                    login = value.second;
+            string authorizeHeader;
+            for(const auto& value : headers){
+                if(value.first == "Authorization"){
+                    authorizeHeader = value.second;
                 }
-                else if(value.first == "password"){
-                    password = value.second;
-                }
-                else{
-                    throw invalid_argument("Wrong Parameter! 'login' and 'password' are the only valid parameters for this request.");
-                }
+            }
+            if(authorizeHeader.empty()){
+                throw invalid_argument("Missing header! 'Authorization' is a required header for this request.");
             }
 
-            login = decode_base64(login);
-            password = decode_base64(password);
+            authorizeHeader = decode_base64(authorizeHeader);
+            vector<string> authorize = splitString(authorizeHeader, " ");
+            authorize = splitString(authorize[1], ":");
+            //the header needs to be in the format 'Authorization: Basic login:password' in base64
+
+            string& login = authorize[0];
+            string& password = authorize[1];
 
             if(!db.checkUser(login, sha512(password))){
                 throw invalid_argument("User does not exist!");
@@ -91,7 +95,7 @@ int main(int argc, char** argv) {
             string token = random_string(40);
             db.addToken(token, login);
 
-            response->write(StatusCode::success_ok, login, defaultHeaders());
+            response->write(StatusCode::success_ok, token, defaultHeaders());
         }
         catch(const exception &e){
             response->write(StatusCode::client_error_bad_request, e.what(), defaultHeaders());
@@ -102,6 +106,9 @@ int main(int argc, char** argv) {
                                               shared_ptr<HttpsServer::Request> request) {
         try{
             DatabaseManager db;
+
+            loginVerification(db, request->header);
+
             string jsonResponse;
             db.fetchPromotions(jsonResponse);
             response->write(StatusCode::success_ok, jsonResponse, defaultHeaders());
@@ -118,7 +125,9 @@ int main(int argc, char** argv) {
             DatabaseManager db;
             string jsonResponse;
 
-            SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            loginVerification(db, request->header);
+
+            CaseInsensitiveMultimap parameters = request->parse_query_string();
             if(parameters.empty()){
                 throw invalid_argument("Empty Parameter! You need 'id_promotion' and 'login_teacher' parameters for this request.");
             }
@@ -148,7 +157,9 @@ int main(int argc, char** argv) {
             DatabaseManager db;
             string jsonResponse;
 
-            SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            loginVerification(db, request->header);
+
+            CaseInsensitiveMultimap parameters = request->parse_query_string();
             if(parameters.empty()){
                 throw invalid_argument("Empty Parameter! You need a 'id_promotion' parameter for this request.");
             }
@@ -170,13 +181,15 @@ int main(int argc, char** argv) {
         }
     };
 
-    server.resource["^/correction"]["GET"] = [&](shared_ptr<HttpsServer::Response> response,
+    server.resource["^/correction$"]["GET"] = [&](shared_ptr<HttpsServer::Response> response,
                                                   shared_ptr<HttpsServer::Request> request) {
         try{
             DatabaseManager db;
             string jsonResponse;
 
-            SimpleWeb::CaseInsensitiveMultimap parameters = request->parse_query_string();
+            loginVerification(db, request->header);
+
+            CaseInsensitiveMultimap parameters = request->parse_query_string();
             if(parameters.empty()){
                 throw invalid_argument("Empty Parameter! You need 'id_examination' and 'id_student' parameters for this request.");
             }
@@ -193,7 +206,7 @@ int main(int argc, char** argv) {
                 }
             }
 
-            //launch Scan-Analyses
+            //Launch Scan-Analyses
             vector<pair <int,int>> answers;
             string stringImage;
             MainScan(argc, argv , stoi(id_examination), stoi(id_student), answers, stringImage);

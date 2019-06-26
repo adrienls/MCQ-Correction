@@ -31,7 +31,16 @@ void DatabaseManager::connect() {
     soci::statement setEncoding = (session->prepare << "SET NAMES utf8");
     setEncoding.execute(true);
 }
+bool DatabaseManager::checkToken(const string& token){
+    soci::row fields;
+    soci::statement selectFields = (session->prepare <<
+            "SELECT login FROM teacher WHERE token = :token",
+            soci::use(token, "token"),
+            soci::into(fields));
+    selectFields.execute(true);
 
+    return !fields.get<string>(0).empty();
+}
 bool DatabaseManager::checkUser(const string& login, const string& password){
     soci::row fields;
     soci::statement selectFields = (session->prepare <<

@@ -107,6 +107,12 @@ Unzip the folder
 ```
 unzip ./MCQ-Correction-master.zip
 ```
+Install the needed dependencies
+```
+# apt install libconfig9 libconfig++-dev libconfig++9v5 libconfig-dev libconfig-doc
+# apt install qt5-default
+```
+
 
 Compile the project for your system using the [CMakeLists.txt](CMakeLists.txt) available
 
@@ -121,7 +127,7 @@ Start the server by launching the ./MCQ_Correction file and open the index.html 
 
 * [Qt](https://www.qt.io/) - Qt is a cross-platform application framework and widget toolkit for creating classic and embedded graphical user interfaces.
 
-* [libconfig](https://hyperrealm.github.io/libconfig/) - C/C++ library for processing configuration files
+* [libconfig](https://hyperrealm.github.io/libconfig/) - C/C++ library for processing configuration files.
 
 ## Versioning
 * [Git](https://git-scm.com/) is used for versioning.

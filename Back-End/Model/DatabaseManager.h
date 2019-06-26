@@ -43,6 +43,7 @@ public:
         }
     }
 
+    bool checkToken(const string& token);
     bool checkUser(const string& login, const string& password);
     void addToken(const string& token, const string& login);
 
