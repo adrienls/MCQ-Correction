@@ -217,6 +217,7 @@ void DatabaseManager::fetchResponses(const string&imageB64, string &jsonResponse
                 for (int i = 0; i < nbresponses; i++){
                     json << ",\"" << to_string(i+1)  << "\":\"" << 0 << "\"";
                 }
+                json << "},";
                 b++;
             }
             json << "{\"id_question\":\"" << to_string(id_question) << "\"";

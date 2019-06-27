@@ -142,19 +142,3 @@ int main(int argc, char** argv) {
     });
     server_thread.join();
 }
-
-/*
-#include "Controller/Scan-Analyses/MainScan.h"
-#include <QImage>
-#include "Controller/DownloadManager.h"
-int main(int argc, char *argv[])
-{
-    vector<pair <int,int>> answers;
-    QString stringImage;
-    MainScan(argc, argv , 1, 4, answers, stringImage);
-    std::cerr << stringImage.toStdString() << std::endl;
-    for(const auto& val : answers){
-        std::cerr << "Question :" << val.first << " ------ Réponse: " << val.second << std::endl;
-    }
-}
- */
