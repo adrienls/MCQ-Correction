@@ -1,4 +1,4 @@
-let ajax = new Ajax('10.16.1.38', '8080', '10.0.1.19');
+let ajax = new Ajax('localhost', '8080', '10.0.1.19');
 
 ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/token?login=' + sessionStorage.getItem('login_teacher'), displayStudentsTable);
 

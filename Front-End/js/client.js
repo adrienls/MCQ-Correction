@@ -88,6 +88,7 @@ function displayConsultStudent()
 
 function displayCorrectStudent(responses)
 {
+    console.log(responses);
     let data = JSON.parse(responses);
     $('#page-top').html('    <h1 class="d-flex align-items-center justify-content-center h-100">Correct student</h1><br>\n' +
         '    <form class="form-inline d-flex justify-content-center h-100">\n' +
@@ -131,12 +132,12 @@ function displayCorrectStudent(responses)
         {
             text += '<div class="form-group col-md-2">\n';
             if (data[i][j] === "1")  {
-                text += '<input id="checkbox'+i+'" class="form-check-input" type="checkbox" name="response" checked>';
+                text += '<input id="checkbox'+j+'" class="form-check-input" type="checkbox" name="response" checked>';
             }
             else {
-                text += '<input id="checkbox'+i+'" class="form-check-input" name="response" type="checkbox">';
+                text += '<input id="checkbox'+j+'" class="form-check-input" name="response" type="checkbox">';
             }
-            text += '<label class="form-check-label">R'+ i +'</label>\n' + '</div>\n';
+            text += '<label class="form-check-label">R'+ j +'</label>\n' + '</div>\n';
         }
     }
 

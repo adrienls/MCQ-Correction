@@ -213,7 +213,6 @@ void DatabaseManager::fetchResponses(const string&imageB64, string &jsonResponse
             }
             id_question = fields.get<int>(0);
             if (id_question != b+1){
-                std::cout << id_question << " : " << b << std::endl;
                 json << "{\"id_question\":\"" << b+1 << "\"";
                 for (int i = 0; i < nbresponses; i++){
                     json << ",\"" << to_string(i+1)  << "\":\"" << 0 << "\"";
@@ -225,7 +224,7 @@ void DatabaseManager::fetchResponses(const string&imageB64, string &jsonResponse
             b++;
         }
     }
-    while (selectFields.fetch());
+    while (selectFields.fetch() && b<10);
     for (int i = 0; i < nbresponses; i++){
         json << ",\"" << to_string(i+1) << "\":\"" << answers[i] << "\"";
         answers[i] = false;
