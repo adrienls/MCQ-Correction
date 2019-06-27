@@ -16,16 +16,16 @@
 // \param request The request with the data.
 // \param callback The callback to call where the request is successful.
 // \param data The data associated with the request.
-function ajaxRequest(type, request, callback, data= null)
+function ajaxRequest(type, request, callback, async = false, data = null)
 {
   var xhr;
   // Create XML HTTP request.
   xhr = new XMLHttpRequest();
-  if (type === 'GET' && data != null){
-      request += '?' + data;
-  }
+  /*
+  if (type === 'GET' && data != null)
+    request += '?' + data;
+   */
   xhr.open(type, request, true);
-  xhr.withCredentials = true;
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   xhr.setRequestHeader('Authorization','Bearer '+ Cookies.get('token'));
   // Add the onload function.
@@ -43,7 +43,7 @@ function ajaxRequest(type, request, callback, data= null)
   };
 
   // Send XML HTTP request.
-  xhr.send(data);
+  xhr.send();
 }
 
 //------------------------------------------------------------------------------

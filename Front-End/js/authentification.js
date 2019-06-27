@@ -1,6 +1,4 @@
-let ajax = new Ajax('localhost', '8080'); //10.16.1.38
-let teacher = new Teacher();
-let student = new Student();
+let ajax = new Ajax('10.16.1.38', '8080', '10.0.1.19');
 
 ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/token?login=' + sessionStorage.getItem('login_teacher'), displayStudentsTable);
 
@@ -11,11 +9,10 @@ function validateLogin(event)
     let login = document.getElementById('inputLogin').value;
     let password = document.getElementById('inputPassword').value;
     sessionStorage.setItem('login_teacher', login);
-    //ajaxLogin('GET', 'php/request.php/authenticate/', setTokenCookie, login, password);
     ajaxLogin('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/authenticate', setTokenCookie, login, password);
 }
 
-function ajaxLogin(type, request, callback, login, password, data=null)
+function ajaxLogin(type, request, callback, login, password)
 {
     let xhr;
     xhr = new XMLHttpRequest();
@@ -30,14 +27,13 @@ function ajaxLogin(type, request, callback, login, password, data=null)
             case 200:
             case 201:
                 callback(xhr.responseText);
-                //ajaxRequest('GET', 'php/request.php/authenticate', displayStudentsTable);
                 ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/token?login=' + sessionStorage.getItem('login_teacher'), displayStudentsTable);
                 break;
             default:
                 httpErrors(xhr.status);
         }
     };
-    xhr.send(data);
+    xhr.send();
 }
 
 function setTokenCookie(token)
@@ -48,13 +44,14 @@ function setTokenCookie(token)
 function displayStudentsTable(response)
 {
     $('#errors').html('');
-    $('#page-top').html('<h1 class="d-flex align-items-center justify-content-center h-100">Welcome ' + teacher.getName() + '!</h1><div id="formChooseExamination"> <form id="top-form" class="form-inline d-flex align-items-center justify-content-center h-100"> </form> </div>');
+    $('#page-top').html('<h1 class="d-flex align-items-center justify-content-center h-100">Welcome ' + sessionStorage.getItem('login_teacher') + '!</h1><div id="formChooseExamination"> <form id="top-form" class="form-inline d-flex align-items-center justify-content-center h-100"> </form> </div>');
     $('#center-div').html('<div class="panel panel-default"><br>\n' +
         '            <div class="panel-body text-center m-0 d-flex flex-column justify-content-center">\n' +
         '                <form>\n' +
         '                    <div class="form-group row justify-content-center">\n' +
         '                        <div class="col-lg-6">\n' +
         '                            <input type="text" class="form-control text-center" id="searchInput" onkeyup="searchTable()" placeholder="Search for names...">\n' +
+        '<div class="form-group mr-2"><button id="correctPromotion" type="submit" class="btn btn btn-primary">Correct Promotion</button></div>' +
         '                        </div>\n' +
         '                    </div>\n' +
         '                </form>\n' +
@@ -71,6 +68,11 @@ function displayStudentsTable(response)
     ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/promotion', displayPromotions);
     ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/examination?id_promotion=1&login_teacher=' + sessionStorage.getItem('login_teacher'), displayExaminations);
 
+    document.getElementById('correctPromotion').addEventListener("click", function (event) {
+        event.preventDefault();
+        ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/correctionPromotion?id_examination='+ sessionStorage.getItem('idExamination') + '&id_promotion=' + sessionStorage.getItem('idPromotion'), a);
+
+    });
     document.getElementById("top-form").addEventListener("click", function(event)
     {
         event.preventDefault();
