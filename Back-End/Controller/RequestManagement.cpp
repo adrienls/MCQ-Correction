@@ -1,11 +1,11 @@
 
 #include "RequestManagement.h"
-#include "base64.h"
-#include "hash.h"
+#include "String-Operations/base64.h"
+#include "String-Operations/hash.h"
 #include "Scan-Analyses/MainScan.h"
 #include "DownloadManager.h"
-#include "randomString.h"
-#include "splitString.h"
+#include "String-Operations/randomString.h"
+#include "String-Operations/splitString.h"
 
 using std::invalid_argument;
 using std::to_string;

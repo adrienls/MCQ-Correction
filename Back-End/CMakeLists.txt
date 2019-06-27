@@ -8,7 +8,7 @@ find_package(Boost 1.67.0 COMPONENTS filesystem thread REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Network CONFIG REQUIRED)
-add_executable(MCQ_Correction main.cpp Model/DatabaseManager.cpp Model/DatabaseManager.h Controller/base64.cpp Controller/base64.h Controller/hash.cpp Controller/hash.h Controller/httpHeaders.h Controller/Scan-Analyses/Scanner.cpp Controller/Scan-Analyses/Scanner.h Controller/Scan-Analyses/MainScan.cpp Controller/Scan-Analyses/MainScan.h Controller/DownloadManager.cpp Controller/DownloadManager.h Controller/randomString.cpp Controller/randomString.h Controller/splitString.cpp Controller/splitString.h Controller/RequestManagement.cpp Controller/RequestManagement.h)
+add_executable(MCQ_Correction main.cpp Model/DatabaseManager.cpp Model/DatabaseManager.h Controller/String-Operations/base64.cpp Controller/String-Operations/base64.h Controller/String-Operations/hash.cpp Controller/String-Operations/hash.h Controller/httpHeaders.h Controller/Scan-Analyses/Scanner.cpp Controller/Scan-Analyses/Scanner.h Controller/Scan-Analyses/MainScan.cpp Controller/Scan-Analyses/MainScan.h Controller/DownloadManager.cpp Controller/DownloadManager.h Controller/String-Operations/randomString.cpp Controller/String-Operations/randomString.h Controller/String-Operations/splitString.cpp Controller/String-Operations/splitString.h Controller/RequestManagement.cpp Controller/RequestManagement.h)
 
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(/usr/include/soci)
