@@ -21,6 +21,7 @@ public:
     string examinationRequest(const CaseInsensitiveMultimap& parameters, const CaseInsensitiveMultimap& headers);
     string studentRequest(const CaseInsensitiveMultimap& parameters, const CaseInsensitiveMultimap& headers);
     string correctionRequest(const CaseInsensitiveMultimap& parameters, const CaseInsensitiveMultimap& headers, int argc, char** argv);
+    string correctionPromotionRequest(const CaseInsensitiveMultimap& parameters, const CaseInsensitiveMultimap& headers, int argc, char** argv);
 };
 
 #endif //MCQ_CORRECTION_REQUESTMANAGEMENT_H

@@ -8,8 +8,7 @@
 #include "splitString.h"
 
 using std::invalid_argument;
-using std::stringstream;
-using std::endl;
+using std::to_string;
 
 void RequestManagement::loginVerification(const CaseInsensitiveMultimap& headers){
     if(headers.empty()){
@@ -54,7 +53,7 @@ string RequestManagement::tokenRequest(const CaseInsensitiveMultimap& parameters
 }
 string RequestManagement::authenticateRequest(const CaseInsensitiveMultimap& headers){
     if(headers.empty()){
-        throw invalid_argument("Empty header! 'Authorize Bearer' is a required header for this request.");
+        throw invalid_argument("Empty header! 'Authorization' is a required header for this request.");
     }
     string authorizeHeader;
     for(const auto& value : headers){
@@ -66,9 +65,9 @@ string RequestManagement::authenticateRequest(const CaseInsensitiveMultimap& hea
         throw invalid_argument("Missing header! 'Authorization' is a required header for this request.");
     }
 
-    authorizeHeader = decode_base64(authorizeHeader);
     vector<string> authorize = splitString(authorizeHeader, " ");
-    authorize = splitString(authorize[1], ":");
+    authorizeHeader = decode_base64(authorize[1]);
+    authorize = splitString(authorizeHeader, ":");
     //the header needs to be in the format 'Authorization: Basic login:password' in base64
 
     string& login = authorize[0];
@@ -163,5 +162,37 @@ string RequestManagement::correctionRequest(const CaseInsensitiveMultimap& param
     //return json
     string jsonResponse;
     db.fetchResponses(stringImage, jsonResponse, id_examination, id_student);
+    return jsonResponse;
+}
+
+string RequestManagement::correctionPromotionRequest(const CaseInsensitiveMultimap& parameters, const CaseInsensitiveMultimap& headers, int argc, char** argv){
+    if(parameters.empty()){
+        throw invalid_argument("Empty Parameter! You need 'id_examination' and 'id_promotion' parameters for this request.");
+    }
+    string id_examination, id_promotion;
+    for(const auto& value : parameters){
+        if(value.first == "id_examination"){
+            id_examination = value.second;
+        }
+        else if(value.first == "id_promotion"){
+            id_promotion = value.second;
+        }
+        else{
+            throw invalid_argument("Wrong Parameter! 'id_examination' and 'id_promotion' are the only valid parameters for this request.");
+        }
+    }
+
+    string jsonResponse;
+    vector <int> students = db.getStudentsOfPromotions(id_promotion);
+    for(int i=0; i < students.size(); i++){
+        vector<pair <int,int>> answers;
+        string stringImage;
+        MainScan(argc, argv , stoi(id_examination), students[i], answers, stringImage);
+
+        //insert in database
+        if (db.NumberResponsesOfStudentsInExamination(id_examination, to_string(students[i])) == 0){
+            db.insertResponses(students[i], answers);
+        }
+    }
     return jsonResponse;
 }

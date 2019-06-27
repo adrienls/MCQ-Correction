@@ -17,6 +17,7 @@ function ajaxLogin(type, request, callback)
     let xhr;
     xhr = new XMLHttpRequest();
     xhr.open(type, request, true);
+    xhr.withCredentials = true;
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onload = function ()
     {
@@ -71,7 +72,7 @@ function displayStudentsTable(response)
         console.log('a');
         ajaxRequest('GET', 'https://' + ajax.getIp() + ':' + ajax.getPort() + '/correctionPromotion?id_examination:'+ sessionStorage.getItem('idExamination') + '&id_promotion:' + sessionStorage.getItem('idPromotion'), a);
 
-    })
+    });
     document.getElementById("top-form").addEventListener("click", function(event)
     {
         event.preventDefault();
