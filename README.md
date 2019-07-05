@@ -112,10 +112,11 @@ Install the needed dependencies
 # apt install libconfig9 libconfig++-dev libconfig++9v5 libconfig-dev libconfig-doc
 # apt install qt5-default
 # apt install libssl-dev
+# apt install libsoci-dev
 ```
 
 
-Compile the project for your system using the [CMakeLists.txt](CMakeLists.txt) available
+Compile the project for your system using the [CMakeLists.txt](Back-End/CMakeLists.txt) available
 
 Start the server by launching the ./MCQ_Correction file and open the index.html to have the Front-End interface.
 
