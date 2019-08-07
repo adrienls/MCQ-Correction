@@ -109,7 +109,7 @@ unzip ./MCQ-Correction-master.zip
 ```
 Install the needed dependencies
 ```
-# apt install libconfig9 libconfig++-dev libconfig++9v5 libconfig-dev libconfig-doc
+# apt install libconfig++-dev
 # apt install qt5-default
 # apt install libssl-dev
 # apt install libsoci-dev
